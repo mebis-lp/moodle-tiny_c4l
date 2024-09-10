@@ -56,6 +56,8 @@ $string['helplinktext'] = 'C4L helper';
 $string['inlinetag'] = 'Inline tag';
 $string['keyconcept'] = 'Key concept';
 $string['learningoutcomes'] = 'Learning outcomes';
+$string['linktomanagername'] = 'Link to management';
+$string['linktomanagerdesc'] = 'Go to <a href="#management">management</a> to change stuff';
 $string['menuitem_c4l'] = 'Components for Learning (C4L)';
 $string['min'] = 'min';
 $string['notintendedforstudents'] = 'Not intended for Students ';

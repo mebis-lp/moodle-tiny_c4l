@@ -55,7 +55,6 @@ if ($hassiteconfig) {
         $setting = new admin_setting_configmulticheckbox('tiny_c4l/aimedatstudents', $name, $desc, $components, $components);
         $settings->add($setting);
 
-
         // Configure not intended students' components.
         $components = [
             'estimatedtime' => get_string('estimatedtime', 'tiny_c4l'),
@@ -69,5 +68,12 @@ if ($hassiteconfig) {
         $desc = get_string('notintendedforstudents_desc', 'tiny_c4l');
         $setting = new admin_setting_configmulticheckbox('tiny_c4l/notintendedforstudents', $name, $desc, [], $components);
         $settings->add($setting);
+
+        $settings->add(new \tiny_c4l\admin\setting_customtext(
+            'tiny_c4l/management',
+            get_string('linktomanagername', 'tiny_c4l'),
+            get_string('linktomanagerdesc', 'tiny_c4l'),
+            ''
+        ));
     }
 }
