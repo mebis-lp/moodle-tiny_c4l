@@ -47,4 +47,12 @@ $functions = [
                 'ajax' => true,
                 'capabilities' => 'tiny/c4l:viewplugin',
         ],
+        'tiny_c4l_delete_item' => [
+                'classname'     => 'tiny_c4l\external\delete_item',
+                'methodname'    => 'execute',
+                'description'   => 'Delete item.',
+                'type'          => 'write',
+                'ajax'          => true,
+                'capabilities'  => 'moodle/site:config',
+        ],
 ];
