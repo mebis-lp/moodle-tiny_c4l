@@ -26,6 +26,12 @@ namespace tiny_c4l\local;
  */
 class utils {
 
+    public const TINY_C4L_CACHE_AREA = 'tiny_c4l_css';
+
+    public const TINY_C4L_CSS_CACHE_KEY = 'css';
+
+    public const TINY_C4L_CSS_CACHE_REV= 'cssrev';
+
     public static function get_all_components(): array {
         global $DB;
         $componentrecords = $DB->get_records('tiny_c4l_component');
@@ -59,5 +65,34 @@ class utils {
         global $DB;
         $flavors = $DB->get_records('tiny_c4l_flavor');
         return array_values($flavors);
+    }
+
+    public static function get_complete_css_as_string(): array {
+        global $DB;
+        $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
+        $css = '';
+        if (!$cache->has(self::TINY_C4L_CSS_CACHE_REV)) {
+            $componentcssentries = $DB->get_fieldset('tiny_c4l_component', 'css');
+            $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
+            $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
+            $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries);
+            $css = array_reduce($cssentries, fn($current, $add) => $current . PHP_EOL . $add, '');
+            if (empty($css)) {
+                $css = '// This file contains the stylesheet for the tiny_c4l plugin.';
+            }
+            $clock = \core\di::get(\core\clock::class);
+            $rev = $clock->time();
+            $cache->set(self::TINY_C4L_CSS_CACHE_KEY, $css);
+            $cache->set(self::TINY_C4L_CSS_CACHE_REV, $rev);
+        } else {
+            $css = $cache->get(self::TINY_C4L_CSS_CACHE_KEY);
+            $rev = $cache->get(self::TINY_C4L_CSS_CACHE_REV);
+        }
+        return [$css, $rev];
+    }
+
+    public static function purge_css_cache(): void {
+        $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
+        $cache->delete(self::TINY_C4L_CSS_CACHE_REV);
     }
 }

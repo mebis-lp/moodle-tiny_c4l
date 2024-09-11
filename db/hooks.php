@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - https://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,20 +12,21 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tiny C4L plugin version details.
+ * Hook callbacks for tiny_c4l.
  *
  * @package     tiny_c4l
- * @copyright   2022 Marc Català <reskit@gmail.com>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright   2024 ISB Bayern
+ * @author      Philipp Memmel
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'tiny_c4l';
-$plugin->release = '2.1.1';
-$plugin->requires = 2022112800;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->version = 2024091101;
+$callbacks = [
+        [
+                'hook' => \core\hook\output\before_http_headers::class,
+                'callback' => \tiny_c4l\local\hook_callbacks::class . '::add_c4l_stylesheet_to_dom',
+        ],
+];

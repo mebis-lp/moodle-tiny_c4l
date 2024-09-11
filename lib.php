@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tiny_c4l\local\utils;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -33,10 +35,35 @@ function tiny_c4l_user_preferences() {
     $preferences = [];
 
     $preferences['c4l_components_variants'] = array(
-        'type' => PARAM_RAW,
-        'null' => NULL_NOT_ALLOWED,
-        'default' => ''
+            'type' => PARAM_RAW,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => ''
     );
 
     return $preferences;
+}
+
+/**
+ * Serve the requested file for the tiny_c4l plugin.
+ *
+ * @param stdClass $course the course object
+ * @param stdClass $cm the course module object
+ * @param stdClass $context the context
+ * @param string $filearea the name of the file area
+ * @param array $args extra arguments (itemid, path)
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
+ * @return bool false if the file not found, just send the file otherwise and do not return anything
+ */
+function tiny_c4l_pluginfile(
+        $course,
+        $cm,
+        $context,
+        string $filearea,
+        array $args,
+        bool $forcedownload,
+        array $options
+): bool {
+    [$css, $rev] = utils::get_complete_css_as_string();
+    send_file($css, 'tiny_c4l_styles.css?rev=' . $rev, null, 0, true, false, 'text/css');
 }
