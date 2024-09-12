@@ -6,10 +6,12 @@ import {call as fetchMany} from 'core/ajax';
 export const init = async() => {
 
     // Add listener for adding a new source.
-    // let addsource = document.getElementById('addsource');
-    // addsource.addEventListener('click', async(e) => {
-    //     showModal(e, 0);
-    // });
+    let addsources = document.getElementsByClassName('add');
+    addsources.forEach(element => {
+        element.addEventListener('click', async(e) => {
+            showModal(e, element.dataset.id, element.dataset.table);
+        });
+    });
 
     // Add listener to edit sources.
     let editsources = document.getElementsByClassName('edit');
@@ -37,10 +39,10 @@ export const init = async() => {
 function showModal(e, id, table) {
     e.preventDefault();
     let title;
-    if (id === 0) {
-        title = getString('addsource', 'repository_imagehub');
+    if (id == 0) {
+        title = getString('additem', 'tiny_c4l');
     } else {
-        title = getString('editsource', 'repository_imagehub');
+        title = getString('edititem', 'tiny_c4l');
     }
 
     const modalForm = new ModalForm({
@@ -73,8 +75,6 @@ function deleteModal(e, id, title, table) {
     ).then(async() => {
         if (id !== 0) {
             try {
-                console.log(id);
-                console.log(table);
                 const deleted = await deleteItem(id, table);
                 if (deleted) {
                     const link = document.querySelector('[data-table="' + table + '"][data-id="' + id + '"]');

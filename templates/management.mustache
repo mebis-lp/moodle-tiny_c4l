@@ -52,7 +52,7 @@
             "js": "component1-js",
             "timecreated": 1628569200,
             "timemodified": 1628572800
-        },        
+        },
         "variant": {
             "id": 1,
             "name": "Variant1",
@@ -74,19 +74,27 @@
     }
 }}
 
-<h2>compcats</h2>
+<h2>{{#str}} compcat, tiny_c4l {{/str}}</h2>
 <div class="row row-cols-1 row-cols-md-6">
     {{#compcats}}
         <div class="col mb-4 item">
             <div class="card h-100">
             <img src="..." class="card-img-top" alt="...">
             <div class="card-body">
-                <h5 class="card-title">{{displayname}}</h5>
-                <a class="edit" href="#" data-id={{id}} data-table="compcat">
-                    {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>                    
-                <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="compcat">
-                    {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
-                </a>
+                {{#id}}
+                    <h5 class="card-title">{{displayname}}</h5>
+                    <a class="edit" href="#" data-id={{id}} data-table="compcat">
+                        {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                    <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="compcat">
+                        {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                    </a>
+                {{/id}}
+                {{^id}}
+                    <a class="add" href="#" data-id=0 data-table="compcat">
+                        <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
+                        {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
+                    </a>
+                {{/id}}
             </div>
             </div>
         </div>
@@ -100,12 +108,20 @@
             <div class="card h-100">
             <img src="..." class="card-img-top" alt="...">
             <div class="card-body">
-                <h5 class="card-title">{{displayname}}</h5>
-                <a class="edit" href="#" data-id={{id}} data-table="flavor">
-                    {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>                    
-                <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="flavor">
-                    {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
-                </a>
+                {{#id}}
+                    <h5 class="card-title">{{displayname}}</h5>
+                    <a class="edit" href="#" data-id={{id}} data-table="flavor">
+                        {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                    <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="flavor">
+                        {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                    </a>
+                {{/id}}
+                {{^id}}
+                    <a class="add" href="#" data-id=0 data-table="flavor">
+                        <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
+                        {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
+                    </a>
+                {{/id}}
             </div>
             </div>
         </div>
@@ -119,12 +135,20 @@
             <div class="card h-100">
             <img src="..." class="card-img-top" alt="...">
             <div class="card-body">
-                <h5 class="card-title">{{displayname}}</h5>
-                <a class="edit" href="#" data-id={{id}} data-table="component">
-                    {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>                    
-                <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="component">
-                    {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
-                </a>
+                {{#id}}
+                    <h5 class="card-title">{{displayname}}</h5>
+                    <a class="edit" href="#" data-id={{id}} data-table="component">
+                        {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                    <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="component">
+                        {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                    </a>
+                {{/id}}
+                {{^id}}
+                    <a class="add" href="#" data-id=0 data-table="component">
+                        <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
+                        {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
+                    </a>
+                {{/id}}
             </div>
             </div>
         </div>
@@ -138,12 +162,20 @@
             <div class="card h-100">
             <img src="..." class="card-img-top" alt="...">
             <div class="card-body">
-                <h5 class="card-title">{{displayname}}</h5>
-                <a class="edit" href="#" data-id={{id}} data-table="variant">
-                    {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>                    
-                <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="variant">
-                    {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
-                </a>
+                {{#id}}
+                    <h5 class="card-title">{{displayname}}</h5>
+                    <a class="edit" href="#" data-id={{id}} data-table="variant">
+                        {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                    <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="variant">
+                        {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                    </a>
+                {{/id}}
+                {{^id}}
+                    <a class="add" href="#" data-id=0 data-table="variant">
+                        <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
+                        {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
+                    </a>
+                {{/id}}
             </div>
             </div>
         </div>

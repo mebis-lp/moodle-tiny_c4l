@@ -17,18 +17,18 @@
 namespace tiny_c4l\form;
 
 /**
- * Class management_compcat_form
+ * Class management_flavor_form
  *
  * @package    tiny_c4l
  * @copyright  2024 Tobias Garske, ISB Bayern
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class management_compcat_form extends base_form {
+class management_flavor_form extends base_form {
     public function definition() {
         $mform =& $this->_form;
 
-        // Set this variable to access correct db tables.
-        $this->formtype = "compcat";
+        // Set this variable to access correct db table.
+        $this->formtype = "flavor";
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -39,8 +39,8 @@ class management_compcat_form extends base_form {
         $mform->addElement('text', 'displayname', get_string('displayname', 'tiny_c4l'), ['size' => '255']);
         $mform->setType('displayname', PARAM_TEXT);
 
-        $mform->addElement('text', 'displayorder', get_string('displayorder', 'tiny_c4l'));
-        $mform->setType('displayorder', PARAM_INT);
+        $mform->addElement('textarea', 'content', get_string('content', 'tiny_c4l'));
+        $mform->setType('content', PARAM_TEXT);
 
         $mform->addElement('textarea', 'css', get_string('css', 'tiny_c4l'));
         $mform->setType('css', PARAM_TEXT);

@@ -25,11 +25,10 @@ use core_form\dynamic_form;
  * @copyright  2024 Tobias Garske, ISB Bayern
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class base_form extends dynamic_form {
-    private string $formtype;
+abstract class base_form extends dynamic_form {
+    protected string $formtype;
 
-    public function definition() {
-    }
+    abstract public function definition();
 
     /**
      * Returns context where this form is used
@@ -48,6 +47,27 @@ class base_form extends dynamic_form {
         require_admin();
     }
 
+    /**
+     * Form validation.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
+    public function validation($data, $files) {
+        $errors = [];
+        if (empty($data['name'])) {
+            $errors['name'] = get_string('errorname', 'tiny_c4l');
+        }
+        if (empty($data['displayname'])) {
+            $errors['displayname'] = get_string('errordisplayname', 'tiny_c4l');
+        }
+        if (array_key_exists('compcat', $data) && empty($data['compcat'])) {
+            $errors['compcat'] = get_string('errorcompcat', 'tiny_c4l');
+        }
+        return $errors;
+    }
 
     /**
      * Process the form submission, used if form was submitted via AJAX
@@ -92,7 +112,6 @@ class base_form extends dynamic_form {
 
         $table = 'tiny_c4l_' . $this->formtype;
 
-        $context = $this->get_context_for_dynamic_submission();
         $id = $this->optional_param('id', null, PARAM_INT);
         $source = $DB->get_record($table, ['id' => $id]);
         $this->set_data($source);

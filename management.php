@@ -40,6 +40,12 @@ $flavor = array_values($DB->get_records('tiny_c4l_flavor'));
 $component = array_values($DB->get_records('tiny_c4l_component'));
 $variant = array_values($DB->get_records('tiny_c4l_variant'));
 
+$addentry = [];
+array_push($compcats, $addentry);
+array_push($flavor, $addentry);
+array_push($component, $addentry);
+array_push($variant, $addentry);
+
 $PAGE->requires->js_call_amd('tiny_c4l/management', 'init');
 echo($OUTPUT->render_from_template('tiny_c4l/management', [
     'compcats' => $compcats,
