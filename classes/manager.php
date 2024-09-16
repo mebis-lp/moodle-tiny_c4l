@@ -109,7 +109,7 @@ class manager {
                     if ($column === 'id') {
                         if ($update) {
                             $oldid = $update->id;
-                            $obj->$column = (string) $value;
+                            $obj->id = $update->id;
                         } else {
                             $oldid = (string) $value;
                         }
