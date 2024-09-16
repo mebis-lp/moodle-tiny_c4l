@@ -81,16 +81,16 @@ abstract class base_form extends dynamic_form {
         $formdata = $this->get_data();
 
         $formdata->timemodified = time();
-        $newrecord = !empty($formdata->id);
+        $newrecord = empty($formdata->id);
 
         $table = 'tiny_c4l_' . $this->formtype;
         // Update existing records.
         if ($newrecord) {
-            $oldrecord = $DB->get_record($table, ['id' => $formdata->id]);
-            $result = $DB->update_record($table, $formdata);
-        } else {
             // Insert new record.
             $result = $DB->insert_record($table, $formdata);
+        } else {
+            $oldrecord = $DB->get_record($table, ['id' => $formdata->id]);
+            $result = $DB->update_record($table, $formdata);
         }
 
         // Purge CSS to show new one.

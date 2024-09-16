@@ -27,7 +27,7 @@ class management_compcat_form extends base_form {
     public function definition() {
         $mform =& $this->_form;
 
-        // Set this variable to access correct db tables.
+        // Set this variable to access correct db table.
         $this->formtype = "compcat";
 
         $mform->addElement('hidden', 'id');
