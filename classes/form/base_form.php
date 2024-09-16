@@ -95,6 +95,7 @@ abstract class base_form extends dynamic_form {
         // Update existing records.
         if ($newrecord) {
             // Insert new record.
+            $formdata->timecreated = time();
             $result = $DB->insert_record($table, $formdata);
         } else {
             $oldrecord = $DB->get_record($table, ['id' => $formdata->id]);
