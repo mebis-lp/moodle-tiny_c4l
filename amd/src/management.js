@@ -21,6 +21,12 @@ export const init = async() => {
         });
     });
 
+    // Add listener to import xml files.
+    let importxml = document.getElementById('c4l_import');
+    importxml.addEventListener('click', async(e) => {
+        importModal(e);
+    });
+
     // Add listener to delete sources.
     let deletesources = document.getElementsByClassName('delete');
     deletesources.forEach(element => {
@@ -58,6 +64,28 @@ function showModal(e, id, table) {
 
     modalForm.show();
 }
+
+
+/**
+ * Show dynamic form to import xml backups.
+ * @param {*} e
+ */
+function importModal(e) {
+    e.preventDefault();
+    let title = getString('import', 'tiny_c4l');
+
+    const modalForm = new ModalForm({
+        // Load import form.
+        formClass: "tiny_c4l\\form\\management_import_form",
+        args: {},
+        modalConfig: {title: title},
+    });
+    // Reload page after submit.
+    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => location.reload());
+
+    modalForm.show();
+}
+
 
 /**
  * Show dynamic form to delete a source.

@@ -48,11 +48,14 @@ array_push($flavor, $addentry);
 array_push($component, $addentry);
 array_push($variant, $addentry);
 
+// Add exportlink.
+$exportlink = \moodle_url::make_pluginfile_url(SYSCONTEXTID, 'tiny_c4l', 'export', null, '/', 'tiny_c4l_export.xml')->out();
 $PAGE->requires->js_call_amd('tiny_c4l/management', 'init');
 echo($OUTPUT->render_from_template('tiny_c4l/management', [
     'compcats' => $compcats,
     'flavor' => $flavor,
     'component' => $component,
     'variant' => $variant,
+    'exportlink' => $exportlink,
 ]));
 echo $OUTPUT->footer();

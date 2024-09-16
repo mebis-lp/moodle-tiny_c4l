@@ -64,6 +64,12 @@ function tiny_c4l_pluginfile(
         bool $forcedownload,
         array $options
 ): bool {
+    // Special case, sending a question bank export.
+    if ($filearea === 'export') {
+        $manager = new \tiny_c4l\manager;
+        send_file($manager->export(), 'tiny_c4l_export.xml', null, 0, true, true, 'text/xml');
+    }
+    // Serve whole css for c4l items.
     [$css, $rev] = utils::get_complete_css_as_string();
     send_file($css, 'tiny_c4l_styles.css?rev=' . $rev, null, 0, true, false, 'text/css');
     return true;

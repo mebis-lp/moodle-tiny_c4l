@@ -69,6 +69,7 @@ if ($hassiteconfig) {
         $setting = new admin_setting_configmulticheckbox('tiny_c4l/notintendedforstudents', $name, $desc, [], $components);
         $settings->add($setting);
 
+        // Add text with link to management as setting.
         $settings->add(new \tiny_c4l\admin\setting_customtext(
             'tiny_c4l/management',
             get_string('linktomanagername', 'tiny_c4l'),
