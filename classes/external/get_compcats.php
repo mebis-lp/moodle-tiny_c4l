@@ -67,7 +67,7 @@ class get_compcats extends external_api {
                         'id' => new external_value(PARAM_INT, 'the id o the category'),
                         'name' => new external_value(PARAM_TEXT, 'the name of the category'),
                         'displayname' => new external_value(PARAM_TEXT, 'the display name of the category'),
-                        'order' => new external_value(PARAM_INT, 'the component category the component belongs to'),
+                        'displayorder' => new external_value(PARAM_INT, 'the component category the component belongs to'),
                 ], 'a component category')
         );
     }
