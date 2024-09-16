@@ -25,6 +25,10 @@ namespace tiny_c4l\form;
  */
 class management_component_form extends base_form {
     public function definition() {
+        global $DB;
+
+        $compcats = $DB->get_records_menu('tiny_c4l_compcat', null, 'displayname', 'id, displayname');
+
         $mform =& $this->_form;
 
         // Set this variable to access correct db table.
@@ -33,20 +37,20 @@ class management_component_form extends base_form {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('text', 'name', get_string('name', 'tiny_c4l'), ['size' => '255']);
+        $mform->addElement('text', 'name', get_string('componentname', 'tiny_c4l'), ['size' => '255']);
         $mform->setType('name', PARAM_TEXT);
 
         $mform->addElement('text', 'displayname', get_string('displayname', 'tiny_c4l'), ['size' => '255']);
         $mform->setType('displayname', PARAM_TEXT);
 
-        $mform->addElement('text', 'compcat', get_string('compcat', 'tiny_c4l'));
+        $mform->addElement('select', 'compcat', get_string('compcat', 'tiny_c4l'), $compcats);
         $mform->setType('compcat', PARAM_INT);
 
         $mform->addElement('text', 'imageclass', get_string('imageclass', 'tiny_c4l'), ['size' => '255']);
         $mform->setType('imageclass', PARAM_TEXT);
 
         $mform->addElement('textarea', 'code', get_string('code', 'tiny_c4l'));
-        $mform->setType('code', PARAM_TEXT);
+        $mform->setType('code', PARAM_RAW);
 
         $mform->addElement('textarea', 'text', get_string('text', 'tiny_c4l'));
         $mform->setType('text', PARAM_TEXT);
