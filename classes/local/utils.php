@@ -93,6 +93,6 @@ class utils {
 
     public static function purge_css_cache(): void {
         $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
-        $cache->delete(self::TINY_C4L_CSS_CACHE_REV);
+        $cache->purge();
     }
 }

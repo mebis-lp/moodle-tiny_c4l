@@ -66,4 +66,5 @@ function tiny_c4l_pluginfile(
 ): bool {
     [$css, $rev] = utils::get_complete_css_as_string();
     send_file($css, 'tiny_c4l_styles.css?rev=' . $rev, null, 0, true, false, 'text/css');
+    return true;
 }

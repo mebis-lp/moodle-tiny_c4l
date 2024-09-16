@@ -39,9 +39,11 @@ class management_component_form extends base_form {
 
         $mform->addElement('text', 'name', get_string('componentname', 'tiny_c4l'), ['size' => '255']);
         $mform->setType('name', PARAM_TEXT);
+        $mform->addHelpButton('name', 'componentname', 'tiny_c4l');
 
         $mform->addElement('text', 'displayname', get_string('displayname', 'tiny_c4l'), ['size' => '255']);
         $mform->setType('displayname', PARAM_TEXT);
+        $mform->addHelpButton('displayname', 'displayname', 'tiny_c4l');
 
         $mform->addElement('select', 'compcat', get_string('compcat', 'tiny_c4l'), $compcats);
         $mform->setType('compcat', PARAM_INT);
@@ -51,6 +53,7 @@ class management_component_form extends base_form {
 
         $mform->addElement('textarea', 'code', get_string('code', 'tiny_c4l'));
         $mform->setType('code', PARAM_RAW);
+        $mform->addHelpButton('code', 'code', 'tiny_c4l');
 
         $mform->addElement('textarea', 'text', get_string('text', 'tiny_c4l'));
         $mform->setType('text', PARAM_TEXT);

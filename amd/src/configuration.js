@@ -60,6 +60,7 @@ const configureToolbar = (toolbar) => {
 };
 
 export const configure = (instanceConfig) => {
+    instanceConfig.content_css.push(M.cfg.wwwroot + '/pluginfile.php/1/tiny_c4l/tiny_c4l_styles.css');
     return {
         menu: configureMenu(instanceConfig.menu),
         toolbar: configureToolbar(instanceConfig.toolbar),
