@@ -80,6 +80,14 @@ abstract class base_form extends dynamic_form {
         $context = $this->get_context_for_dynamic_submission();
         $formdata = $this->get_data();
 
+        if(is_array($formdata->flavors)) {
+            $formdata->flavors = implode(',', $formdata->flavors);
+        }
+
+        if(is_array($formdata->variants)) {
+            $formdata->variants = implode(',', $formdata->variants);
+        }
+
         $formdata->timemodified = time();
         $newrecord = empty($formdata->id);
 
@@ -102,7 +110,6 @@ abstract class base_form extends dynamic_form {
             'update' => $result,
         ];
     }
-
 
     /**
      * Load in existing data as form defaults

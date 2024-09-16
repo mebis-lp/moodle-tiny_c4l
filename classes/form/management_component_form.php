@@ -28,6 +28,8 @@ class management_component_form extends base_form {
         global $DB;
 
         $compcats = $DB->get_records_menu('tiny_c4l_compcat', null, 'displayname', 'id, displayname');
+        $flavors = $DB->get_records_menu('tiny_c4l_flavor', null, 'displayname', 'name, displayname');
+        $variants = $DB->get_records_menu('tiny_c4l_variant', null, 'displayname', 'name, displayname');
 
         $mform =& $this->_form;
 
@@ -58,10 +60,10 @@ class management_component_form extends base_form {
         $mform->addElement('textarea', 'text', get_string('text', 'tiny_c4l'));
         $mform->setType('text', PARAM_TEXT);
 
-        $mform->addElement('text', 'variants', get_string('variants', 'tiny_c4l'), ['size' => '255']);
+        $mform->addElement('autocomplete', 'variants', get_string('variants', 'tiny_c4l'), $variants, ['multiple' => true]);
         $mform->setType('variants', PARAM_TEXT);
 
-        $mform->addElement('text', 'flavors', get_string('flavors', 'tiny_c4l'), ['size' => '255']);
+        $mform->addElement('autocomplete', 'flavors', get_string('flavors', 'tiny_c4l'), $flavors, ['multiple' => true]);
         $mform->setType('flavors', PARAM_TEXT);
 
         $mform->addElement('text', 'displayorder', get_string('displayorder', 'tiny_c4l'));
