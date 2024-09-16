@@ -102,20 +102,32 @@ class manager {
         foreach ($xml as $table => $rows) {
             foreach ($rows as $row) {
                 $obj = new \stdClass();
+                // Check if item already exists.
+                $update = $DB->get_record_select($table, 'name = ?', [(string) $row->name]);
                 foreach ($row as $column => $value) {
-                    // Skip id, but remember old id for tiny_c4l_component table.
+                    // Skip id for inserts, but remember old id for tiny_c4l_component table.
                     if ($column === 'id') {
-                        $oldid = (String) $value;
+                        if ($update) {
+                            $oldid = $update->id;
+                            $obj->$column = (string) $value;
+                        } else {
+                            $oldid = (string) $value;
+                        }
                         continue;
                     }
-                    $obj->$column = (String) $value;
+                    // Set value for update / insert.
+                    $obj->$column = (string) $value;
                 }
                 // Use mapping to update with new id from tiny_c4l_compcat.
                 if ($table === 'tiny_c4l_component') {
                     $obj->compcat = $componentmap[$obj->compcat];
                 }
                 // Insert record.
-                $newid = $DB->insert_record($table, $obj);
+                if ($update) {
+                    $DB->update_record($table, $obj);
+                } else {
+                    $newid = $DB->insert_record($table, $obj);
+                }
                 // Create mapping with returned id for tiny_c4l_component table.
                 if ($table === 'tiny_c4l_compcat') {
                     $componentmap[$oldid] = $newid;
