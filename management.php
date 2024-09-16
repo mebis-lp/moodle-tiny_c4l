@@ -31,10 +31,12 @@ $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
 $PAGE->set_heading(get_string('menuitem_c4l', 'tiny_c4l') . ' ' . get_string('management', 'tiny_c4l'));
 
+require_capability('tiny/c4l:manage', context_system::instance());
+
 echo $OUTPUT->header();
 
 // Get all c4l components.
-// User array_values so mustache can parse it.
+// Use array_values so mustache can parse it.
 $compcats = array_values($DB->get_records('tiny_c4l_compcat'));
 $flavor = array_values($DB->get_records('tiny_c4l_flavor'));
 $component = array_values($DB->get_records('tiny_c4l_component'));
