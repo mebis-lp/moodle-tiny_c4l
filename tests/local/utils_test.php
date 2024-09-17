@@ -1,0 +1,129 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace tiny_c4l\local;
+
+use stdClass;
+
+/**
+ * Test class for the utils functions.
+ *
+ * @package    tiny_c4l
+ * @copyright  2024 ISB Bayern
+ * @author     Philipp Memmel
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+final class utils_test extends \advanced_testcase {
+
+    /**
+     * Tests the method .
+     *
+     * @covers \tiny_c4l\local\utils::get_complete_css_as_string
+     * @covers \tiny_c4l\local\utils::purge_css_cache
+     */
+    public function test_get_complete_css_as_string(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $compcatrecord1 = new stdClass();
+        $compcatrecord1->name = 'category1';
+        $compcatrecord1->displayname = 'Category 1';
+        $compcatrecord1->css = 'body { margin: 3rem; }';
+        $compcatrecord1id = $DB->insert_record('tiny_c4l_compcat', $compcatrecord1);
+        $compcatrecord2 = new stdClass();
+        $compcatrecord2->name = 'category2';
+        $compcatrecord2->displayname = 'Category 2';
+        $compcatrecord2->css = 'body { padding: 3rem; }';
+        $compcatrecord2id = $DB->insert_record('tiny_c4l_compcat', $compcatrecord2);
+
+        $componentrecord1 = new stdClass();
+        $componentrecord1->name = 'component1';
+        $componentrecord1->displayname = 'Component 1'; ;
+        $componentrecord1->compcat = $compcatrecord1id;
+        $componentrecord1->css = 'body { background-color: red; }';
+        $DB->insert_record('tiny_c4l_component', $componentrecord1);
+
+        $componentrecord2 = new stdClass();
+        $componentrecord2->name = 'component2';
+        $componentrecord2->displayname = 'Component 2'; ;
+        $componentrecord2->compcat = $compcatrecord2id;
+        $componentrecord2->css = 'body { background-color: green; }';
+        $DB->insert_record('tiny_c4l_component', $componentrecord2);
+
+        $flavorrecord1 = new stdClass();
+        $flavorrecord1->name = 'flavor1';
+        $flavorrecord1->displayname = 'Flavor 1';
+        $flavorrecord1->css = 'body { color: blue }';
+        $DB->insert_record('tiny_c4l_flavor', $flavorrecord1);
+
+        $flavorrecord2 = new stdClass();
+        $flavorrecord2->name = 'flavor2';
+        $flavorrecord2->displayname = 'Flavor 2';
+        $flavorrecord2->css = 'body { color: yellow }';
+        $DB->insert_record('tiny_c4l_flavor', $flavorrecord2);
+
+        $starttime = time();
+        $this->mock_clock_with_frozen($starttime);
+
+        [$css, $revfirsthit] = utils::get_complete_css_as_string();
+        $this->assertStringContainsString($compcatrecord1->css, $css);
+        $this->assertStringContainsString($compcatrecord2->css, $css);
+        $this->assertStringContainsString($componentrecord1->css, $css);
+        $this->assertStringContainsString($componentrecord2->css, $css);
+        $this->assertStringContainsString($flavorrecord1->css, $css);
+        $this->assertStringContainsString($flavorrecord2->css, $css);
+        $this->assertEquals($starttime, $revfirsthit);
+
+        $this->mock_clock_with_frozen($starttime + 10);
+        [$css, $revsecondhit] = utils::get_complete_css_as_string();
+        $this->assertStringContainsString($compcatrecord1->css, $css);
+        $this->assertStringContainsString($compcatrecord2->css, $css);
+        $this->assertStringContainsString($componentrecord1->css, $css);
+        $this->assertStringContainsString($componentrecord2->css, $css);
+        $this->assertStringContainsString($flavorrecord1->css, $css);
+        $this->assertStringContainsString($flavorrecord2->css, $css);
+        // Should still be cached, so we retrieve the original revision.
+        $this->assertEquals($revsecondhit, $revfirsthit);
+
+        $newclock = $this->mock_clock_with_frozen($starttime + 20);
+        $compcatrecord1 = $DB->get_record('tiny_c4l_compcat', ['id' => $compcatrecord1id]);
+        $compcatrecord1->css = 'p { color: pink; }';
+        $DB->update_record('tiny_c4l_compcat', $compcatrecord1);
+        utils::purge_css_cache();
+        [$css, $revthirdhit] = utils::get_complete_css_as_string();
+        $this->assertStringContainsString($compcatrecord1->css, $css);
+        $this->assertStringContainsString($compcatrecord2->css, $css);
+        $this->assertStringContainsString($componentrecord1->css, $css);
+        $this->assertStringContainsString($componentrecord2->css, $css);
+        $this->assertStringContainsString($flavorrecord1->css, $css);
+        $this->assertStringContainsString($flavorrecord2->css, $css);
+        // We get a new revision because we had to rebuild the cache.
+        $this->assertEquals($newclock->time(), $revthirdhit);
+
+        // Check if it also works if we purge all the caches of moodle.
+        $newclock = $this->mock_clock_with_frozen($starttime + 30);
+        purge_all_caches();
+        [$css, $revthirdhit] = utils::get_complete_css_as_string();
+        $this->assertStringContainsString($compcatrecord1->css, $css);
+        $this->assertStringContainsString($compcatrecord2->css, $css);
+        $this->assertStringContainsString($componentrecord1->css, $css);
+        $this->assertStringContainsString($componentrecord2->css, $css);
+        $this->assertStringContainsString($flavorrecord1->css, $css);
+        $this->assertStringContainsString($flavorrecord2->css, $css);
+        // We get a new revision because we had to rebuild the cache.
+        $this->assertEquals($newclock->time(), $revthirdhit);
+    }
+}
