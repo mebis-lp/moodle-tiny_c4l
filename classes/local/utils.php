@@ -67,26 +67,25 @@ class utils {
         return array_values($flavors);
     }
 
-    public static function get_complete_css_as_string(): array {
+    /**
+     * Rebuild the css cache.
+     *
+     * @return int the new revision for the cache
+     */
+    public static function rebuild_css_cache(): int {
         global $DB;
         $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
-        $cachedrev = $cache->get(self::TINY_C4L_CSS_CACHE_REV);
-        if (!$cachedrev) {
-            $componentcssentries = $DB->get_fieldset('tiny_c4l_component', 'css');
-            $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
-            $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
-            $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries);
-            $css = array_reduce($cssentries, fn($current, $add) => $current . PHP_EOL . $add,
-                    '// This file contains the stylesheet for the tiny_c4l plugin.');
-            $clock = \core\di::get(\core\clock::class);
-            $rev = $clock->time();
-            $cache->set(self::TINY_C4L_CSS_CACHE_KEY, $css);
-            $cache->set(self::TINY_C4L_CSS_CACHE_REV, $rev);
-        } else {
-            $css = $cache->get(self::TINY_C4L_CSS_CACHE_KEY);
-            $rev = $cachedrev;
-        }
-        return [$css, $rev];
+        $componentcssentries = $DB->get_fieldset('tiny_c4l_component', 'css');
+        $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
+        $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
+        $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries);
+        $css = array_reduce($cssentries, fn($current, $add) => $current . PHP_EOL . $add,
+                '/* This file contains the stylesheet for the tiny_c4l plugin.*/');
+        $clock = \core\di::get(\core\clock::class);
+        $rev = $clock->time();
+        $cache->set(self::TINY_C4L_CSS_CACHE_KEY, $css);
+        $cache->set(self::TINY_C4L_CSS_CACHE_REV, $rev);
+        return $rev;
     }
 
     /**
@@ -95,5 +94,15 @@ class utils {
     public static function purge_css_cache(): void {
         $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
         $cache->purge();
+    }
+
+    /**
+     * Helper function to retrieve the currently cached tiny_c4l css.
+     *
+     * @return string|false the css code as string, false if no cache entry found
+     */
+    public static function get_css_from_cache(): string|false {
+        $cache = \cache::make('tiny_c4l', utils::TINY_C4L_CACHE_AREA);
+        return $cache->get(utils::TINY_C4L_CSS_CACHE_KEY);
     }
 }

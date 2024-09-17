@@ -16,6 +16,7 @@
 
 namespace tiny_c4l\local;
 
+use core\hook\output\before_http_headers;
 use stdClass;
 
 /**
@@ -29,10 +30,11 @@ use stdClass;
 final class utils_test extends \advanced_testcase {
 
     /**
-     * Tests the method .
+     * Tests the caching and cache invalidation functionality for the delivering of the tiny_c4l css.
      *
      * @covers \tiny_c4l\local\utils::get_complete_css_as_string
      * @covers \tiny_c4l\local\utils::purge_css_cache
+     * @covers \tiny_c4l\local\utils::rebuild_css_cache
      */
     public function test_get_complete_css_as_string(): void {
         global $DB;
@@ -78,52 +80,63 @@ final class utils_test extends \advanced_testcase {
         $starttime = time();
         $this->mock_clock_with_frozen($starttime);
 
-        [$css, $revfirsthit] = utils::get_complete_css_as_string();
+        // We need to initially build the cache.
+        // This is usually being triggered by the
+        global $OUTPUT;
+        $beforehttpheadershook = new before_http_headers($OUTPUT);
+        hook_callbacks::add_c4l_stylesheet_to_dom($beforehttpheadershook);
+
+        $css = utils::get_css_from_cache();
         $this->assertStringContainsString($compcatrecord1->css, $css);
         $this->assertStringContainsString($compcatrecord2->css, $css);
         $this->assertStringContainsString($componentrecord1->css, $css);
         $this->assertStringContainsString($componentrecord2->css, $css);
         $this->assertStringContainsString($flavorrecord1->css, $css);
         $this->assertStringContainsString($flavorrecord2->css, $css);
-        $this->assertEquals($starttime, $revfirsthit);
 
+        $dbreadsbefore = $DB->perf_get_queries();
+        hook_callbacks::add_c4l_stylesheet_to_dom($beforehttpheadershook);
+        $this->assertEquals($dbreadsbefore, $DB->perf_get_queries());
         $this->mock_clock_with_frozen($starttime + 10);
-        [$css, $revsecondhit] = utils::get_complete_css_as_string();
+        $css = utils::get_css_from_cache();
         $this->assertStringContainsString($compcatrecord1->css, $css);
         $this->assertStringContainsString($compcatrecord2->css, $css);
         $this->assertStringContainsString($componentrecord1->css, $css);
         $this->assertStringContainsString($componentrecord2->css, $css);
         $this->assertStringContainsString($flavorrecord1->css, $css);
         $this->assertStringContainsString($flavorrecord2->css, $css);
-        // Should still be cached, so we retrieve the original revision.
-        $this->assertEquals($revsecondhit, $revfirsthit);
 
-        $newclock = $this->mock_clock_with_frozen($starttime + 20);
+        $this->mock_clock_with_frozen($starttime + 20);
         $compcatrecord1 = $DB->get_record('tiny_c4l_compcat', ['id' => $compcatrecord1id]);
         $compcatrecord1->css = 'p { color: pink; }';
         $DB->update_record('tiny_c4l_compcat', $compcatrecord1);
+        // This needs to be called from the admin interface whenever there is a change in the configuration.
         utils::purge_css_cache();
-        [$css, $revthirdhit] = utils::get_complete_css_as_string();
+        // Now the callback should trigger a cache rebuild.
+        $dbreadsbefore = $DB->perf_get_queries();
+        hook_callbacks::add_c4l_stylesheet_to_dom($beforehttpheadershook);
+        $this->assertGreaterThan($dbreadsbefore, $DB->perf_get_queries());
+        $css = utils::get_css_from_cache();
         $this->assertStringContainsString($compcatrecord1->css, $css);
         $this->assertStringContainsString($compcatrecord2->css, $css);
         $this->assertStringContainsString($componentrecord1->css, $css);
         $this->assertStringContainsString($componentrecord2->css, $css);
         $this->assertStringContainsString($flavorrecord1->css, $css);
         $this->assertStringContainsString($flavorrecord2->css, $css);
-        // We get a new revision because we had to rebuild the cache.
-        $this->assertEquals($newclock->time(), $revthirdhit);
 
         // Check if it also works if we purge all the caches of moodle.
-        $newclock = $this->mock_clock_with_frozen($starttime + 30);
         purge_all_caches();
-        [$css, $revthirdhit] = utils::get_complete_css_as_string();
+        // If we purge the moodle caches the hook callback should trigger a cache rebuild.
+        $dbreadsbefore = $DB->perf_get_queries();
+        hook_callbacks::add_c4l_stylesheet_to_dom($beforehttpheadershook);
+        $this->assertGreaterThan($dbreadsbefore, $DB->perf_get_queries());
+        $this->mock_clock_with_frozen($starttime + 30);
+        $css = utils::get_css_from_cache();
         $this->assertStringContainsString($compcatrecord1->css, $css);
         $this->assertStringContainsString($compcatrecord2->css, $css);
         $this->assertStringContainsString($componentrecord1->css, $css);
         $this->assertStringContainsString($componentrecord2->css, $css);
         $this->assertStringContainsString($flavorrecord1->css, $css);
         $this->assertStringContainsString($flavorrecord2->css, $css);
-        // We get a new revision because we had to rebuild the cache.
-        $this->assertEquals($newclock->time(), $revthirdhit);
     }
 }

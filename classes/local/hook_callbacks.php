@@ -28,8 +28,21 @@ use core\hook\output\before_http_headers;
  */
 class hook_callbacks {
 
+    /**
+     * Hook callback function for the before_http_headers hook.
+     *
+     * Used to add our custom stylesheet to the DOM.
+     *
+     * @param before_http_headers $beforehttpheadershook
+     */
     public static function add_c4l_stylesheet_to_dom(\core\hook\output\before_http_headers $beforehttpheadershook): void {
-        $pluginfileurl = \moodle_url::make_pluginfile_url(SYSCONTEXTID, 'tiny_c4l', '', null, '', 'tiny_c4l_styles.css');
+        $cache = \cache::make('tiny_c4l', utils::TINY_C4L_CACHE_AREA);
+        $rev = $cache->get(utils::TINY_C4L_CSS_CACHE_REV);
+        if (!$rev) {
+            $rev = utils::rebuild_css_cache();
+        }
+        $pluginfileurl = \moodle_url::make_pluginfile_url(SYSCONTEXTID, 'tiny_c4l', '', null, '',
+                'tiny_c4l_styles.css?rev=' . $rev);
         $beforehttpheadershook->renderer->get_page()->requires->css($pluginfileurl);
     }
 }
