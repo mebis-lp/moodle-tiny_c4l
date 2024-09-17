@@ -33,7 +33,7 @@ class setting_customtext extends \admin_setting {
      * @param string $defaultsetting Default value
      */
     public function __construct($name, $visiblename, $description, $defaultsetting) {
-        $this->defaultsetting = $defaultsetting;
+        $this->nosave = true;
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
