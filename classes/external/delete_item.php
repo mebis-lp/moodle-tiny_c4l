@@ -57,6 +57,9 @@ class delete_item extends external_api {
             'id' => $id,
             'table' => $table,
         ]);
+        $systemcontext = \context_system::instance();
+        self::validate_context($systemcontext);
+        require_capability('tiny/c4l:manage', $systemcontext);
 
         // Delete source.
         $DB->delete_records_select('tiny_c4l_' . $table, 'id = ?', [$id]);

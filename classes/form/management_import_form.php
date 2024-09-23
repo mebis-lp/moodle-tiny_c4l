@@ -54,8 +54,6 @@ class management_import_form extends base_form {
      * @return array Returns whether a new source was created.
      */
     public function process_dynamic_submission(): array {
-        global $DB;
-
         $xmlcontent = $this->get_file_content('backupfile');
 
         $manager = new \tiny_c4l\manager;

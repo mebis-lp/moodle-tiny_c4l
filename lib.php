@@ -66,6 +66,8 @@ function tiny_c4l_pluginfile(
 ): bool {
     // Special case, sending a question bank export.
     if ($filearea === 'export') {
+        require_capability('tiny/c4l:manage', \context_system::instance());
+
         $manager = new \tiny_c4l\manager;
         send_file($manager->export(), 'tiny_c4l_export.xml', null, 0, true, true, 'text/xml');
     }

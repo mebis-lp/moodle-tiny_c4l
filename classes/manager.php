@@ -49,7 +49,6 @@ class manager {
 
     public function export(): string {
         global $DB;
-        require_admin();
 
         // Start.
         $xmloutput = new memory_xml_output();
@@ -87,6 +86,7 @@ class manager {
 
     public function import(string $xmlcontent): bool {
         global $DB;
+
         try {
             $xml = simplexml_load_string($xmlcontent);
         } catch (\Exception $exception) {

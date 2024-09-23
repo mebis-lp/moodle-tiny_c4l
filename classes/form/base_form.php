@@ -44,7 +44,7 @@ abstract class base_form extends dynamic_form {
      * Checks if current user has sufficient permissions, otherwise throws exception
      */
     protected function check_access_for_dynamic_submission(): void {
-        require_admin();
+        require_capability('tiny/c4l:manage', \context_system::instance());
     }
 
     /**
