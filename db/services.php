@@ -17,7 +17,7 @@
 /**
  * External service definitions for local_ai_manager.
  *
- * @package    local_ai_manager
+ * @package    tiny_c4l
  * @copyright  ISB Bayern, 2024
  * @author     Dr. Peter Mayer
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -43,6 +43,13 @@ $functions = [
         'tiny_c4l_get_flavors' => [
                 'classname' => 'tiny_c4l\external\get_flavors',
                 'description' => 'Retrieve the list of flavors',
+                'type' => 'read',
+                'ajax' => true,
+                'capabilities' => 'tiny/c4l:viewplugin',
+        ],
+        'tiny_c4l_get_variants' => [
+                'classname' => 'tiny_c4l\external\get_variants',
+                'description' => 'Retrieve the list of variants',
                 'type' => 'read',
                 'ajax' => true,
                 'capabilities' => 'tiny/c4l:viewplugin',

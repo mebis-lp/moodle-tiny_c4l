@@ -28,7 +28,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class utils_test extends \advanced_testcase {
-
     /**
      * Tests the caching and cache invalidation functionality for the delivering of the tiny_c4l css.
      *
@@ -53,14 +52,16 @@ final class utils_test extends \advanced_testcase {
 
         $componentrecord1 = new stdClass();
         $componentrecord1->name = 'component1';
-        $componentrecord1->displayname = 'Component 1'; ;
+        $componentrecord1->displayname = 'Component 1';
+        ;
         $componentrecord1->compcat = $compcatrecord1id;
         $componentrecord1->css = 'body { background-color: red; }';
         $DB->insert_record('tiny_c4l_component', $componentrecord1);
 
         $componentrecord2 = new stdClass();
         $componentrecord2->name = 'component2';
-        $componentrecord2->displayname = 'Component 2'; ;
+        $componentrecord2->displayname = 'Component 2';
+        ;
         $componentrecord2->compcat = $compcatrecord2id;
         $componentrecord2->css = 'body { background-color: green; }';
         $DB->insert_record('tiny_c4l_component', $componentrecord2);

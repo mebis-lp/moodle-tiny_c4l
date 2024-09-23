@@ -38,20 +38,20 @@ class get_flavors extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         // TODO Refactor to accept the contextid of the tiny editor
-        return new external_function_parameters ([]);
+        return new external_function_parameters([]);
     }
 
     /**
-     * Retrieve the components.
+     * Retrieve the flavors.
      *
-     * @return array associative array containing the aggregated information for all the components
+     * @return array associative array containing the aggregated information for all the flavors
      */
     public static function execute(): array {
         // We usually need to call validate_parameters, but we do not have any (yet).
         $context = \context_system::instance();
         self::validate_context($context);
         // TODO Readd capability check based on the context id which should be submitted
-        //require_capability('tiny/c4l:viewplugin', $context);
+        // require_capability('tiny/c4l:viewplugin', $context);
 
         return \tiny_c4l\local\utils::get_all_flavors();
     }
@@ -63,7 +63,7 @@ class get_flavors extends external_api {
      */
     public static function execute_returns(): external_multiple_structure {
         return new external_multiple_structure(
-                new external_single_structure([
+            new external_single_structure([
                         'id' => new external_value(PARAM_INT, 'the id of the flavor'),
                         'name' => new external_value(PARAM_TEXT, 'the name of the flavor'),
                         'displayname' => new external_value(PARAM_TEXT, 'the display name of the flavor'),

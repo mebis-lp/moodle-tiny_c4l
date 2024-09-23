@@ -377,6 +377,22 @@ const getFlavors = async () => {
     return flavorsToStore;
 };
 
+const getComponentVariants = (component, variants) => {
+    const componentVariants = [];
+    component.variants.forEach(variant => {
+        if (variants[variant] !== undefined) {
+            componentVariants.push({
+                name: variant,
+                state: 'off',
+                imageClass: 'c4l-' + variant + '-variant-off',
+                title: langStrings.get(variant),
+                content: variants[variant].content,
+            });
+        }
+    });
+    return componentVariants;
+};
+
 /**
  * Get the C4L buttons for the dialogue.
  *
@@ -388,9 +404,9 @@ const getButtons = async (editor) => {
     const sel = editor.selection.getContent();
     let componentCode = '';
     let placeholder = '';
-    let variants = [];
-
+    const variants = await getVariants();
     const components = await getComponents();
+
     console.log(components);
     Object.values(components).forEach(component => {
         buttons.push({
@@ -399,7 +415,7 @@ const getButtons = async (editor) => {
             type: component.compcat,
             imageClass: 'c4l-' + component.imageclass,
             htmlcode: component.code,
-            variants: component.variants,
+            variants: getComponentVariants(component, variants),
         });
     });
     console.log(buttons);
@@ -407,8 +423,20 @@ const getButtons = async (editor) => {
     return buttons;
 };
 
+const getVariants = async() => {
+    const variants = await fetchMany([{
+        methodname: 'tiny_c4l_get_variants',
+        args: {},
+    }])[0];
 
-const getComponents = async () => {
+    const indexedVariants = {};
+    variants.forEach(variant => {
+        indexedVariants[variant.name] = variant;
+    });
+    return indexedVariants;
+};
+
+const getComponents = async() => {
     const components = await fetchMany([{
         methodname: 'tiny_c4l_get_components',
         args: {},
@@ -422,7 +450,7 @@ const getComponents = async () => {
     return indexedComponents;
 };
 
-const getCategories = async () => {
+const getCategories = async() => {
     const categories = await fetchMany([{
         methodname: 'tiny_c4l_get_compcats',
         args: {},
@@ -479,6 +507,7 @@ const getVariantsState = (component, elements) => {
  * @param {bool} updateHtml
  */
 const updateVariantComponentState = (variant, button, modal, show, updateHtml) => {
+    console.log(variant);
     const selectedVariant = 'c4l-' + variant.dataset.variant + '-variant';
     const selectedButton = button.dataset.id;
     const componentClass = button.dataset.classcomponent;

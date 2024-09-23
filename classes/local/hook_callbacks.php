@@ -27,7 +27,6 @@ use core\hook\output\before_http_headers;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class hook_callbacks {
-
     /**
      * Hook callback function for the before_http_headers hook.
      *
@@ -41,8 +40,14 @@ class hook_callbacks {
         if (!$rev) {
             $rev = utils::rebuild_css_cache();
         }
-        $pluginfileurl = \moodle_url::make_pluginfile_url(SYSCONTEXTID, 'tiny_c4l', '', null, '',
-                'tiny_c4l_styles.css?rev=' . $rev);
+        $pluginfileurl = \moodle_url::make_pluginfile_url(
+            SYSCONTEXTID,
+            'tiny_c4l',
+            '',
+            null,
+            '',
+            'tiny_c4l_styles.css?rev=' . $rev
+        );
         $beforehttpheadershook->renderer->get_page()->requires->css($pluginfileurl);
     }
 }

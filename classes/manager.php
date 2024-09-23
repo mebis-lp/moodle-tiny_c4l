@@ -37,7 +37,6 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
-
     /** @var array All tables to export data from. **/
     protected static $tables = [
         'compcat' => 'tiny_c4l_compcat',
@@ -68,7 +67,7 @@ class manager {
             'filearea' => 'export',
             'itemid' => time(),
             'filepath' => '/',
-            'filename' => 'tiny_c4l_export.xml'
+            'filename' => 'tiny_c4l_export.xml',
         ];
         $exportxmlfile = $fs->create_file_from_string($filerecord, $this->exportxml());
         $exportfiles['tiny_c4l_export.xml'] = $exportxmlfile;

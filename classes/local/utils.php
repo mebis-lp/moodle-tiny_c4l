@@ -25,12 +25,11 @@ namespace tiny_c4l\local;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class utils {
-
     public const TINY_C4L_CACHE_AREA = 'tiny_c4l_css';
 
     public const TINY_C4L_CSS_CACHE_KEY = 'css';
 
-    public const TINY_C4L_CSS_CACHE_REV= 'cssrev';
+    public const TINY_C4L_CSS_CACHE_REV = 'cssrev';
 
     public static function get_all_components(): array {
         global $DB;
@@ -38,6 +37,7 @@ class utils {
         $components = [];
         foreach ($componentrecords as $record) {
             // TODO export which flavors are allowed
+
             $components[] = [
                     'id' => $record->id,
                     'name' => $record->name,
@@ -46,11 +46,17 @@ class utils {
                     'imageclass' => $record->imageclass,
                     'code' => $record->code,
                     'text' => $record->text,
+                    'flavors' => explode(',', $record->flavors),
                     'variants' => explode(',', $record->variants),
             ];
-
         }
         return $components;
+    }
+
+    public static function get_all_variants(): array {
+        global $DB;
+        $variants = $DB->get_records('tiny_c4l_variant');
+        return array_values($variants);
     }
 
     public static function get_all_compcats(): array {
@@ -77,8 +83,11 @@ class utils {
         $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
         $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
         $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries);
-        $css = array_reduce($cssentries, fn($current, $add) => $current . PHP_EOL . $add,
-                '/* This file contains the stylesheet for the tiny_c4l plugin.*/');
+        $css = array_reduce(
+            $cssentries,
+            fn($current, $add) => $current . PHP_EOL . $add,
+            '/* This file contains the stylesheet for the tiny_c4l plugin.*/'
+        );
         $clock = \core\di::get(\core\clock::class);
         $rev = $clock->time();
         $cache->set(self::TINY_C4L_CSS_CACHE_KEY, $css);
@@ -100,7 +109,7 @@ class utils {
      * @return string|false the css code as string, false if no cache entry found
      */
     public static function get_css_from_cache(): string|false {
-        $cache = \cache::make('tiny_c4l', utils::TINY_C4L_CACHE_AREA);
-        return $cache->get(utils::TINY_C4L_CSS_CACHE_KEY);
+        $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
+        return $cache->get(self::TINY_C4L_CSS_CACHE_KEY);
     }
 }

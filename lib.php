@@ -34,11 +34,11 @@ defined('MOODLE_INTERNAL') || die();
 function tiny_c4l_user_preferences() {
     $preferences = [];
 
-    $preferences['c4l_components_variants'] = array(
+    $preferences['c4l_components_variants'] = [
             'type' => PARAM_RAW,
             'null' => NULL_NOT_ALLOWED,
-            'default' => ''
-    );
+            'default' => '',
+    ];
 
     return $preferences;
 }
@@ -56,20 +56,27 @@ function tiny_c4l_user_preferences() {
  * @return bool false if the file not found, just send the file otherwise and do not return anything
  */
 function tiny_c4l_pluginfile(
-        $course,
-        $cm,
-        $context,
-        string $filearea,
-        array $args,
-        bool $forcedownload,
-        array $options
+    $course,
+    $cm,
+    $context,
+    string $filearea,
+    array $args,
+    bool $forcedownload,
+    array $options
 ): bool {
     // Special case, sending a question bank export.
     if ($filearea === 'export') {
         require_capability('tiny/c4l:manage', \context_system::instance());
 
-        $manager = new \tiny_c4l\manager;
+        $manager = new \tiny_c4l\manager();
         send_stored_file($manager->export());
+    } else if ($filearea === 'images') {
+        $fs = get_file_storage();
+        $fullpath = '/1/tiny_c4l/images/' . implode('/', $args);
+        if ((!$file = $fs->get_file_by_hash(sha1($fullpath))) || $file->is_directory()) {
+            return false;
+        }
+        send_stored_file($file, 0, 0, $forcedownload, $options);
     }
     $css = utils::get_css_from_cache();
     if (!$css) {

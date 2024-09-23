@@ -129,6 +129,8 @@ export const variantExists = (component, variant) => {
 export const getVariantsClass = (component) => {
     let variants = [];
 
+    console.log(variantPreferences?.[component]);
+
     if (variantPreferences?.[component]) {
         variantPreferences[component].forEach(variant => {
             variants.push('c4l-' + variant + '-variant');

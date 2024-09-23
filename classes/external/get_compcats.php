@@ -38,7 +38,7 @@ class get_compcats extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         // TODO Refactor to accept the contextid of the tiny editor
-        return new external_function_parameters ([]);
+        return new external_function_parameters([]);
     }
 
     /**
@@ -51,7 +51,7 @@ class get_compcats extends external_api {
         $context = \context_system::instance();
         self::validate_context($context);
         // TODO Readd capability check based on the context id which should be submitted
-        //require_capability('tiny/c4l:viewplugin', $context);
+        // require_capability('tiny/c4l:viewplugin', $context);
 
         return \tiny_c4l\local\utils::get_all_compcats();
     }
@@ -63,7 +63,7 @@ class get_compcats extends external_api {
      */
     public static function execute_returns(): external_multiple_structure {
         return new external_multiple_structure(
-                new external_single_structure([
+            new external_single_structure([
                         'id' => new external_value(PARAM_INT, 'the id o the category'),
                         'name' => new external_value(PARAM_TEXT, 'the name of the category'),
                         'displayname' => new external_value(PARAM_TEXT, 'the display name of the category'),

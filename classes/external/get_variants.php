@@ -23,28 +23,27 @@ use core_external\external_single_structure;
 use core_external\external_value;
 
 /**
- * Web service to retrieve the components.
+ * Web service to retrieve the variants.
  *
  * @package    tiny_c4l
  * @copyright  2024 ISB Bayern
- * @author     Philipp Memmel
+ * @author     Stefan Hanauska
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_components extends external_api {
+class get_variants extends external_api {
     /**
      * Describes the parameters.
      *
      * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
-        // TODO Refactor to accept the contextid of the tiny editor
         return new external_function_parameters([]);
     }
 
     /**
-     * Retrieve the components.
+     * Retrieve the variants.
      *
-     * @return array associative array containing the aggregated information for all the components
+     * @return array associative array containing the aggregated information for all the variants
      */
     public static function execute(): array {
         // We usually need to call validate_parameters, but we do not have any (yet).
@@ -53,7 +52,7 @@ class get_components extends external_api {
         // TODO Readd capability check based on the context id which should be submitted
         // require_capability('tiny/c4l:viewplugin', $context);
 
-        return \tiny_c4l\local\utils::get_all_components();
+        return \tiny_c4l\local\utils::get_all_variants();
     }
 
     /**
@@ -64,20 +63,11 @@ class get_components extends external_api {
     public static function execute_returns(): external_multiple_structure {
         return new external_multiple_structure(
             new external_single_structure([
-                        'id' => new external_value(PARAM_INT, 'the id o the component'),
-                        'name' => new external_value(PARAM_TEXT, 'the name of the component'),
-                        'displayname' => new external_value(PARAM_TEXT, 'the display name of the component'),
-                        'compcat' => new external_value(PARAM_INT, 'the component category the component belongs to'),
-                        'imageclass' => new external_value(PARAM_TEXT, 'the image class of the component'),
-                        'code' => new external_value(PARAM_RAW, 'the image class of the component'),
-                        'text' => new external_value(PARAM_TEXT, 'the image class of the component'),
-                        'flavors' => new external_multiple_structure(
-                            new external_value(PARAM_TEXT, 'the flavors of the image class'),
-                        ),
-                        'variants' => new external_multiple_structure(
-                            new external_value(PARAM_TEXT, 'the variants of the image class'),
-                        ),
-                ], 'the component')
+                        'id' => new external_value(PARAM_INT, 'the id of the variant'),
+                        'name' => new external_value(PARAM_TEXT, 'the name of the variant'),
+                        'displayname' => new external_value(PARAM_TEXT, 'the display name of the variant'),
+                        'content' => new external_value(PARAM_TEXT, 'the content'),
+                ], 'a component category')
         );
     }
 }

@@ -24,7 +24,6 @@ namespace tiny_c4l\admin;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class setting_customtext extends \admin_setting {
-
     /**
      * Constructor.
      * @param string $name Unique setting name
@@ -62,7 +61,7 @@ class setting_customtext extends \admin_setting {
      * @param string $query
      * @return string
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         $html = '';
         return format_admin_setting($this, $this->visiblename, $html, $this->description, true, '', null, $query);
     }

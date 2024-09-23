@@ -27,9 +27,13 @@ class management_import_form extends base_form {
     public function definition() {
         $mform =& $this->_form;
 
-        $mform->addElement('filepicker', 'backupfile', get_string('file'), null,
-            ['accepted_types' => 'xml']);
-
+        $mform->addElement(
+            'filepicker',
+            'backupfile',
+            get_string('file'),
+            null,
+            ['accepted_types' => 'xml']
+        );
     }
 
     /**
@@ -56,7 +60,7 @@ class management_import_form extends base_form {
     public function process_dynamic_submission(): array {
         $xmlcontent = $this->get_file_content('backupfile');
 
-        $manager = new \tiny_c4l\manager;
+        $manager = new \tiny_c4l\manager();
         $manager->import($xmlcontent);
 
         return [

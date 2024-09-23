@@ -29,11 +29,7 @@ use editor_tiny\plugin_with_menuitems;
  * @copyright  2022 Marc Català <reskit@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugininfo extends plugin implements
-    plugin_with_buttons,
-    plugin_with_menuitems,
-    plugin_with_configuration {
-
+class plugininfo extends plugin implements plugin_with_buttons, plugin_with_configuration, plugin_with_menuitems {
     /**
      * Get the editor buttons for this plugins
      *
