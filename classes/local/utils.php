@@ -46,9 +46,7 @@ class utils {
                     'imageclass' => $record->imageclass,
                     'code' => $record->code,
                     'text' => $record->text,
-                    'variants' => [
-                        // TODO Get variants.
-                    ]
+                    'variants' => explode(',', $record->variants),
             ];
 
         }

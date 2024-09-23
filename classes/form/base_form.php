@@ -16,6 +16,7 @@
 
 namespace tiny_c4l\form;
 
+use core\reportbuilder\local\entities\context;
 use core_form\dynamic_form;
 
 /**
@@ -108,10 +109,11 @@ abstract class base_form extends dynamic_form {
         if ($this->formtype === 'compcat') {
             file_save_draft_area_files(
                 $formdata->compcatfiles,
-                $context->id,
+                SYSCONTEXTID,
                 'tiny_c4l',
                 'images',
                 $recordid,
+                ['subdirs' => 1, 'accepted_types' => ['image']]
             );
         }
 
@@ -136,15 +138,19 @@ abstract class base_form extends dynamic_form {
 
         $id = $this->optional_param('id', null, PARAM_INT);
         $source = $DB->get_record($table, ['id' => $id]);
+        if (!$source) {
+            $source = new \stdClass();
+        }
         // Handle compcat images.
-        if (!empty($id) && $this->formtype === 'compcat') {
-            $draftitemid = file_get_submitted_draft_itemid('images');
+        if ($this->formtype === 'compcat') {
+            $draftitemid = file_get_submitted_draft_itemid('compcatfiles');
             file_prepare_draft_area(
                 $draftitemid,
-                $context->id,
+                SYSCONTEXTID,
                 'tiny_c4l',
                 'images',
                 $id,
+                ['subdirs' => 1, 'accepted_types' => ['image']],
             );
             $source->compcatfiles = $draftitemid;
         }

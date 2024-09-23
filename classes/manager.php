@@ -17,6 +17,8 @@
 namespace tiny_c4l;
 
 use memory_xml_output;
+use moodle_exception;
+use stored_file;
 use xml_writer;
 
 defined('MOODLE_INTERNAL') || die();
@@ -47,7 +49,38 @@ class manager {
     /** @var string Item. **/
     protected static $item = 'row';
 
-    public function export(): string {
+    public function export($compcatid = 0): stored_file {
+        global $DB;
+        $fs = get_file_storage();
+        $fp = get_file_packer('application/zip');
+        $compcats = $DB->get_records('tiny_c4l_compcat');
+        // It is necessary to get the files for each compcat separately to avoid mixing up files from
+        // different categories.
+        foreach ($compcats as $compcat) {
+            $files = $fs->get_area_files(SYSCONTEXTID, 'tiny_c4l', 'images', $compcat->id);
+            foreach ($files as $file) {
+                $exportfiles[$compcat->name . '/' . $file->get_filepath() . $file->get_filename()] = $file;
+            }
+        }
+        $filerecord = [
+            'contextid' => SYSCONTEXTID,
+            'component' => 'tiny_c4l',
+            'filearea' => 'export',
+            'itemid' => time(),
+            'filepath' => '/',
+            'filename' => 'tiny_c4l_export.xml'
+        ];
+        $exportxmlfile = $fs->create_file_from_string($filerecord, $this->exportxml());
+        $exportfiles['tiny_c4l_export.xml'] = $exportxmlfile;
+        $filename = 'tiny_c4l_export_' . time() . '.zip';
+        $exportfile = $fp->archive_to_storage($exportfiles, SYSCONTEXTID, 'tiny_c4l', 'export', 0, '/', $filename);
+        if (!$exportfile) {
+            throw new moodle_exception(get_string('error_export', 'tiny_c4l'));
+        }
+        return $exportfile;
+    }
+
+    public function exportxml(): string {
         global $DB;
 
         // Start.

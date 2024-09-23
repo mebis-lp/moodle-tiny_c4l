@@ -59,6 +59,7 @@ $string['duedate'] = 'Due date';
 $string['edititem'] = 'Edit item';
 $string['enablepreview_desc'] = 'If enabled, a preview is showed when you hover the mouse cursor over each component.';
 $string['enablepreview'] = 'Enable preview';
+$string['error_export'] = 'Error creating export file';
 $string['errorcompcat'] = '**compcat** cant be empty';
 $string['errordisplayname'] = 'Displayname cant be empty';
 $string['errorname'] = 'Name cant be empty';

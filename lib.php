@@ -69,7 +69,7 @@ function tiny_c4l_pluginfile(
         require_capability('tiny/c4l:manage', \context_system::instance());
 
         $manager = new \tiny_c4l\manager;
-        send_file($manager->export(), 'tiny_c4l_export.xml', null, 0, true, true, 'text/xml');
+        send_stored_file($manager->export());
     }
     $css = utils::get_css_from_cache();
     if (!$css) {
