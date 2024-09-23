@@ -80,11 +80,11 @@ abstract class base_form extends dynamic_form {
         $context = $this->get_context_for_dynamic_submission();
         $formdata = $this->get_data();
 
-        if(is_array($formdata->flavors)) {
+        if (is_array($formdata->flavors)) {
             $formdata->flavors = implode(',', $formdata->flavors);
         }
 
-        if(is_array($formdata->variants)) {
+        if (is_array($formdata->variants)) {
             $formdata->variants = implode(',', $formdata->variants);
         }
 
@@ -97,9 +97,22 @@ abstract class base_form extends dynamic_form {
             // Insert new record.
             $formdata->timecreated = time();
             $result = $DB->insert_record($table, $formdata);
+            $recordid = $result;
         } else {
             $oldrecord = $DB->get_record($table, ['id' => $formdata->id]);
             $result = $DB->update_record($table, $formdata);
+            $recordid = $formdata->id;
+        }
+
+        // Save files for Compcat form.
+        if ($this->formtype === 'compcat') {
+            file_save_draft_area_files(
+                $formdata->compcatfiles,
+                $context->id,
+                'tiny_c4l',
+                'images',
+                $recordid,
+            );
         }
 
         // Purge CSS to show new one.
@@ -119,9 +132,22 @@ abstract class base_form extends dynamic_form {
         global $DB;
 
         $table = 'tiny_c4l_' . $this->formtype;
+        $context = $this->get_context_for_dynamic_submission();
 
         $id = $this->optional_param('id', null, PARAM_INT);
         $source = $DB->get_record($table, ['id' => $id]);
+        // Handle compcat images.
+        if (!empty($id) && $this->formtype === 'compcat') {
+            $draftitemid = file_get_submitted_draft_itemid('images');
+            file_prepare_draft_area(
+                $draftitemid,
+                $context->id,
+                'tiny_c4l',
+                'images',
+                $id,
+            );
+            $source->compcatfiles = $draftitemid;
+        }
         $this->set_data($source);
     }
 

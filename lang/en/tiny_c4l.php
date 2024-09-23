@@ -68,6 +68,7 @@ $string['example'] = 'Example';
 $string['expectedfeedback'] = 'Expected feedback';
 $string['export'] = 'Export';
 $string['figure'] = 'Figure';
+$string['files'] = 'Files';
 $string['flavors'] = 'Flavors';
 $string['full-width'] = 'Full width';
 $string['gradingvalue'] = 'Grading value';

@@ -44,5 +44,8 @@ class management_compcat_form extends base_form {
 
         $mform->addElement('textarea', 'css', get_string('css', 'tiny_c4l'));
         $mform->setType('css', PARAM_TEXT);
+
+        $options = ['accepted_types' => ['svg']];
+        $mform->addElement('filemanager', 'compcatfiles', get_string('files', 'tiny_c4l'), null, $options);
     }
 }
