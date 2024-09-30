@@ -403,13 +403,10 @@ const getComponentVariants = (component, variants) => {
 const getButtons = async (editor) => {
     const buttons = [];
     const sel = editor.selection.getContent();
-    let componentCode = '';
-    let placeholder = '';
     const variants = await getVariants();
     setVariants(variants);
     const components = await getComponents();
 
-    console.log(components);
     Object.values(components).forEach(component => {
         buttons.push({
             id: component.id, // TODO do dynamically, maybe we do not need an id
@@ -420,7 +417,6 @@ const getButtons = async (editor) => {
             variants: getComponentVariants(component, variants),
         });
     });
-    console.log(buttons);
 
     return buttons;
 };
@@ -435,7 +431,7 @@ const getVariants = async() => {
     variants.forEach(variant => {
         indexedVariants[variant.name] = variant;
     });
-    console.log(indexedVariants);
+
     return indexedVariants;
 };
 
@@ -510,7 +506,6 @@ const getVariantsState = (component, elements) => {
  * @param {bool} updateHtml
  */
 const updateVariantComponentState = (variant, button, modal, show, updateHtml) => {
-    console.log(variant);
     const selectedVariant = 'c4l-' + variant.dataset.variant + '-variant';
     const selectedButton = button.dataset.id;
     const componentClass = button.dataset.classcomponent;

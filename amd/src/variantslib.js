@@ -23,8 +23,6 @@
 
 import Ajax from 'core/ajax';
 import Notification from 'core/notification';
-import {components as COMPONENTS} from './components';
-//import {variants as VARIANTS} from './variants';
 
 const variantsPreferenceName = 'c4l_components_variants';
 let variantPreferences = {};
@@ -122,7 +120,6 @@ export const saveVariantPreferences = () => {
  * @returns {bool}
  */
 export const variantExists = (component, variant) => {
-    console.log(variantPreferences);
     return variantPreferences?.[component] && variantPreferences[component].indexOf(variant) !== -1;
 };
 
@@ -134,8 +131,6 @@ export const variantExists = (component, variant) => {
  */
 export const getVariantsClass = (component) => {
     let variants = [];
-
-    console.log(variantPreferences?.[component]);
 
     if (variantPreferences?.[component]) {
         variantPreferences[component].forEach(variant => {
