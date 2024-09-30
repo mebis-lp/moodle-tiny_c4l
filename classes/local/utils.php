@@ -82,7 +82,8 @@ class utils {
         $componentcssentries = $DB->get_fieldset('tiny_c4l_component', 'css');
         $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
         $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
-        $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries);
+        $variantscssentries = $DB->get_fieldset('tiny_c4l_variant', 'css');
+        $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries, $variantscssentries);
         $css = array_reduce(
             $cssentries,
             fn($current, $add) => $current . PHP_EOL . $add,
