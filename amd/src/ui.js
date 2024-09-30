@@ -24,7 +24,7 @@
 import {component} from './common';
 import C4LModal from './modal';
 import ModalFactory from 'core/modal_factory';
-import {components as Components} from './components';
+//import {components as Components} from './components';
 import {get_strings as getStrings} from 'core/str';
 import {
     isStudent,
@@ -40,6 +40,7 @@ import {
     loadVariantPreferences,
     removeVariant,
     saveVariantPreferences,
+    setVariants,
     variantExists
 } from './variantslib';
 import {call as fetchMany} from 'core/ajax';
@@ -60,7 +61,16 @@ let currentCategoryId = 1;
  *
  * @param {TinyMCE} editor
  */
-export const handleAction = async (editor) => {
+export const handleAction = async(editor) => {
+    if (!components) {
+        components = await getComponents();
+    }
+    if (!categories) {
+        categories = await getCategories();
+    }
+    if (!flavors) {
+        flavors = await getFlavors();
+    }
     userStudent = isStudent(editor);
     previewC4L = showPreview(editor);
     langStrings = await getAllStrings();
@@ -73,16 +83,7 @@ export const handleAction = async (editor) => {
  *
  * @param  {TinyMCE} editor
  */
-const displayDialogue = async (editor) => {
-    if (!components) {
-        components = await getComponents();
-    }
-    if (!categories) {
-        categories = await getCategories();
-    }
-    if (!flavors) {
-        flavors = await getFlavors();
-    }
+const displayDialogue = async(editor) => {
     const data = Object.assign({}, {});
     const templateContext = await getTemplateContext(editor, data);
     // Show modal with buttons.
@@ -205,7 +206,7 @@ const updateComponentCode = (componentCode, selectedButton, placeholder) => {
     // Apply variants to html component.
     if (variants.length > 0) {
         componentCode = componentCode.replace('{{VARIANTS}}', variants.join(' '));
-        componentCode = componentCode.replace('{{VARIANTSHTML}}', getVariantsHtml(Components[selectedButton].name));
+        componentCode = componentCode.replace('{{VARIANTSHTML}}', getVariantsHtml(components[selectedButton].name));
     } else {
         componentCode = componentCode.replace('{{VARIANTS}}', '');
         componentCode = componentCode.replace('{{VARIANTSHTML}}', '');
@@ -405,6 +406,7 @@ const getButtons = async (editor) => {
     let componentCode = '';
     let placeholder = '';
     const variants = await getVariants();
+    setVariants(variants);
     const components = await getComponents();
 
     console.log(components);
@@ -429,10 +431,11 @@ const getVariants = async() => {
         args: {},
     }])[0];
 
-    const indexedVariants = {};
+    const indexedVariants = [];
     variants.forEach(variant => {
         indexedVariants[variant.name] = variant;
     });
+    console.log(indexedVariants);
     return indexedVariants;
 };
 
@@ -443,7 +446,7 @@ const getComponents = async() => {
     }])[0];
 
     // TODO error handling
-    const indexedComponents = {};
+    const indexedComponents = [];
     components.forEach(component => {
         indexedComponents[component.id] = component;
     });
@@ -520,21 +523,21 @@ const updateVariantComponentState = (variant, button, modal, show, updateHtml) =
     if (previewComponent) {
         if (updateHtml) {
             if (variant.dataset.state == 'on') {
-                removeVariant(Components[selectedButton].name, variant.dataset.variant);
+                removeVariant(components[selectedButton].name, variant.dataset.variant);
                 updateVariantButtonState(variant, false);
                 previewComponent.classList.remove(selectedVariant);
             } else {
-                addVariant(Components[selectedButton].name, variant.dataset.variant);
+                addVariant(components[selectedButton].name, variant.dataset.variant);
                 updateVariantButtonState(variant, true);
                 previewComponent.classList.add(selectedVariant);
             }
 
             // Update variant preview HTML.
             if (variantPreview) {
-                variantPreview.innerHTML = getVariantsHtml(Components[selectedButton].name);
+                variantPreview.innerHTML = getVariantsHtml(components[selectedButton].name);
             }
         } else {
-            variantsHtml = getVariantsHtml(Components[selectedButton].name);
+            variantsHtml = getVariantsHtml(components[selectedButton].name);
             if (show) {
                 previewComponent.classList.add(selectedVariant);
                 variantsHtml += getVariantHtml(variant.dataset.variant);
@@ -550,10 +553,10 @@ const updateVariantComponentState = (variant, button, modal, show, updateHtml) =
     } else {
         // Update variants preferences.
         if (variant.dataset.state == 'on') {
-            removeVariant(Components[selectedButton].name, variant.dataset.variant);
+            removeVariant(components[selectedButton].name, variant.dataset.variant);
             updateVariantButtonState(variant, false);
         } else {
-            addVariant(Components[selectedButton].name, variant.dataset.variant);
+            addVariant(components[selectedButton].name, variant.dataset.variant);
             updateVariantButtonState(variant, true);
         }
     }
@@ -638,11 +641,11 @@ const applyRandomID = (text) => {
  *
  * @return {object} Language strings
  */
-const getAllStrings = async () => {
+const getAllStrings = async() => {
     const keys = [];
     const compRegex = /{{#([^}]*)}}/g;
 
-    Components.forEach(element => {
+    components.forEach(element => {
         keys.push(element.name);
         element.variants.forEach(variant => {
             if (keys.indexOf(variant) === -1) {

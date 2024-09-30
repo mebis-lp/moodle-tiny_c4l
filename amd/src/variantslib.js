@@ -24,10 +24,15 @@
 import Ajax from 'core/ajax';
 import Notification from 'core/notification';
 import {components as COMPONENTS} from './components';
-import {variants as VARIANTS} from './variants';
+//import {variants as VARIANTS} from './variants';
 
 const variantsPreferenceName = 'c4l_components_variants';
 let variantPreferences = {};
+let VARIANTS = [];
+
+export const setVariants = (variants) => {
+    VARIANTS = variants;
+};
 
 /**
  * Load user preferences.
@@ -117,6 +122,7 @@ export const saveVariantPreferences = () => {
  * @returns {bool}
  */
 export const variantExists = (component, variant) => {
+    console.log(variantPreferences);
     return variantPreferences?.[component] && variantPreferences[component].indexOf(variant) !== -1;
 };
 
