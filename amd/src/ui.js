@@ -24,7 +24,6 @@
 import {component} from './common';
 import C4LModal from './modal';
 import ModalFactory from 'core/modal_factory';
-//import {components as Components} from './components';
 import {get_strings as getStrings} from 'core/str';
 import {
     isStudent,
@@ -41,7 +40,8 @@ import {
     removeVariant,
     saveVariantPreferences,
     setVariants,
-    variantExists
+    variantExists,
+    setComponents
 } from './variantslib';
 import {call as fetchMany} from 'core/ajax';
 
@@ -51,6 +51,7 @@ let allowedComponents = [];
 let components = null;
 let categories = null;
 let flavors = null;
+let variants = null;
 let langStrings = {};
 
 let currentFlavor = '';
@@ -71,6 +72,11 @@ export const handleAction = async(editor) => {
     if (!flavors) {
         flavors = await getFlavors();
     }
+    if (!variants) {
+        variants = await getVariants();
+    }
+    setComponents(components);
+    setVariants(variants);
     userStudent = isStudent(editor);
     previewC4L = showPreview(editor);
     langStrings = await getAllStrings();
@@ -180,8 +186,6 @@ const handleButtonFlavorClick = (event, modal) => {
     button.classList.add('c4l-button-flavor-enabled');
     const componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button');
     componentButtons.forEach(componentButton => {
-        console.log("new class")
-        console.log(currentFlavor)
         // TODO remove old class :)
         componentButton.querySelector('.c4l-button-text').classList.add(currentFlavor);
     });
@@ -194,7 +198,7 @@ const handleButtonFlavorClick = (event, modal) => {
  */
 const handleModalHidden = (editor) => {
     editor.targetElm.closest('body').classList.remove('c4l-modal-no-preview');
-    saveVariantPreferences();
+    saveVariantPreferences(components);
 };
 
 const updateComponentCode = (componentCode, selectedButton, placeholder) => {
@@ -225,7 +229,7 @@ const updateComponentCode = (componentCode, selectedButton, placeholder) => {
     componentCode = applyLangStrings(componentCode);
 
     return componentCode;
-}
+};
 
 /**
  * Handle a click in a component button.
@@ -326,9 +330,7 @@ const handleVariantClick = (event, modal) => {
  * @param {object} data
  * @returns {object} data
  */
-const getTemplateContext = async (editor, data) => {
-    console.log('template context')
-    console.log(flavors)
+const getTemplateContext = async(editor, data) => {
     return Object.assign({}, {
         elementid: editor.id,
         buttons: await getButtons(editor),
@@ -343,7 +345,7 @@ const getTemplateContext = async (editor, data) => {
  *
  * @returns {object} data
  */
-const getFilters = async () => {
+const getFilters = async() => {
     const filters = [];
     //const stringValues = await getStrings(Contexts.map((key) => ({key, component})));
     // Iterate over contexts.
@@ -363,7 +365,7 @@ const getFilters = async () => {
  *
  * @returns {object} data
  */
-const getFlavors = async () => {
+const getFlavors = async() => {
     const flavorRecords = await fetchMany([{
         methodname: 'tiny_c4l_get_flavors',
         args: {},
@@ -400,12 +402,9 @@ const getComponentVariants = (component, variants) => {
  * @param {Editor} editor
  * @returns {object} buttons
  */
-const getButtons = async (editor) => {
+const getButtons = async(editor) => {
     const buttons = [];
     const sel = editor.selection.getContent();
-    const variants = await getVariants();
-    setVariants(variants);
-    const components = await getComponents();
 
     Object.values(components).forEach(component => {
         buttons.push({

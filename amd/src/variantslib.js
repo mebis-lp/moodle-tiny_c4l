@@ -27,9 +27,14 @@ import Notification from 'core/notification';
 const variantsPreferenceName = 'c4l_components_variants';
 let variantPreferences = {};
 let VARIANTS = [];
+let COMPONENTS = [];
 
 export const setVariants = (variants) => {
     VARIANTS = variants;
+};
+
+export const setComponents = (components) => {
+    COMPONENTS = components;
 };
 
 /**
@@ -84,11 +89,11 @@ export const saveVariantPreferences = () => {
     let rawPreferences = {};
     let variantObj = {};
     Object.keys(variantPreferences).forEach(preference => {
-        comp = COMPONENTS.find(component => component.name == preference);
+        comp = COMPONENTS.find(component => component !== undefined && component.name == preference);
         if (comp != undefined) {
             rawPreferences[comp.id] = [];
             variantPreferences[preference].forEach((variant) => {
-                variantObj = VARIANTS.find(element => element.name == variant);
+                variantObj = VARIANTS.find(element => element !== undefined && element.name == variant);
                 if (variantObj != undefined) {
                     rawPreferences[comp.id].push(variantObj.id);
                 }
