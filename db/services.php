@@ -26,30 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
-        'tiny_c4l_get_components' => [
-                'classname' => 'tiny_c4l\external\get_components',
-                'description' => 'Retrieve the list of available components',
-                'type' => 'read',
-                'ajax' => true,
-                'capabilities' => 'tiny/c4l:viewplugin',
-        ],
-        'tiny_c4l_get_compcats' => [
-                'classname' => 'tiny_c4l\external\get_compcats',
-                'description' => 'Retrieve the list of component categories',
-                'type' => 'read',
-                'ajax' => true,
-                'capabilities' => 'tiny/c4l:viewplugin',
-        ],
-        'tiny_c4l_get_flavors' => [
-                'classname' => 'tiny_c4l\external\get_flavors',
-                'description' => 'Retrieve the list of flavors',
-                'type' => 'read',
-                'ajax' => true,
-                'capabilities' => 'tiny/c4l:viewplugin',
-        ],
-        'tiny_c4l_get_variants' => [
-                'classname' => 'tiny_c4l\external\get_variants',
-                'description' => 'Retrieve the list of variants',
+        'tiny_c4l_get_c4l_data' => [
+                'classname' => 'tiny_c4l\external\get_c4l_data',
+                'description' => 'Retrieve all c4l data',
                 'type' => 'read',
                 'ajax' => true,
                 'capabilities' => 'tiny/c4l:viewplugin',

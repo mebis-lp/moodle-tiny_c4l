@@ -46,6 +46,7 @@ class utils {
                     'imageclass' => $record->imageclass,
                     'code' => $record->code,
                     'text' => $record->text,
+                    'displayorder' => $record->displayorder,
                     'flavors' => explode(',', $record->flavors),
                     'variants' => explode(',', $record->variants),
             ];
@@ -68,7 +69,39 @@ class utils {
     public static function get_all_flavors(): array {
         global $DB;
         $flavors = $DB->get_records('tiny_c4l_flavor');
-        return array_values($flavors);
+        $flavorsbyname = [];
+        foreach ($flavors as $flavor) {
+            $flavorsbyname[$flavor->name] = $flavor;
+            $flavorsbyname[$flavor->name]->categories = [];
+        }
+        return $flavorsbyname;
+    }
+
+    public static function get_c4l_data(): array {
+        $components = self::get_all_components();
+        $compcats = self::get_all_compcats();
+        $flavors = self::get_all_flavors();
+        $variants = self::get_all_variants();
+
+        foreach ($components as $component) {
+            foreach ($component['flavors'] as $flavor) {
+                if (!isset($flavors[$flavor])) {
+                    continue;
+                }
+                $flavors[$flavor]->categories[] = $component['compcat'];
+            }
+        }
+
+        foreach ($flavors as $flavor) {
+            $flavor->categories = join(',', array_unique($flavor->categories));
+        }
+
+        return [
+                'components' => $components,
+                'categories' => $compcats,
+                'flavors' => $flavors,
+                'variants' => $variants,
+        ];
     }
 
     /**

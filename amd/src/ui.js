@@ -63,18 +63,12 @@ let currentCategoryId = 1;
  * @param {TinyMCE} editor
  */
 export const handleAction = async(editor) => {
-    if (!components) {
-        components = await getComponents();
-    }
-    if (!categories) {
-        categories = await getCategories();
-    }
-    if (!flavors) {
-        flavors = await getFlavors();
-    }
-    if (!variants) {
-        variants = await getVariants();
-    }
+    let data = await getC4LData();
+    components = data.components;
+    categories = data.categories;
+    flavors = data.flavors;
+    variants = data.variants;
+
     setComponents(components);
     setVariants(variants);
     userStudent = isStudent(editor);
@@ -173,8 +167,23 @@ const handleButtonFilterClick = (event, modal) => {
     buttons.forEach(node => node.classList.remove('c4l-button-filter-enabled'));
     button.classList.add('c4l-button-filter-enabled');
 
+    showFlavors(modal, currentCategoryId);
+
     // Show/hide component buttons.
     showCategoryButtons(modal, currentCategoryId);
+};
+
+const showFlavors = (modal, categoryId) => {
+    const flavorButtons = modal.getRoot()[0].querySelectorAll('.c4l-button-flavor');
+    flavorButtons.forEach(node => {
+        node.classList.remove('c4l-button-flavor-enabled');
+        let categories = node.dataset.categories.split(',');
+        if (categories.length == 0 || categories.includes(categoryId)) {
+            node.classList.remove('c4l-hidden');
+        } else {
+            node.classList.add('c4l-hidden');
+        }
+    });
 };
 
 const handleButtonFlavorClick = (event, modal) => {
@@ -360,26 +369,6 @@ const getFilters = async() => {
     return filters;
 };
 
-/**
- * Get the C4L filters for the dialogue.
- *
- * @returns {object} data
- */
-const getFlavors = async() => {
-    const flavorRecords = await fetchMany([{
-        methodname: 'tiny_c4l_get_flavors',
-        args: {},
-    }])[0];
-    const flavorsToStore = [];
-    flavorRecords.forEach(flavor => {
-        flavorsToStore.push({
-            flavor: flavor.name,
-            name: flavor.displayname,
-        });
-    });
-    return flavorsToStore;
-};
-
 const getComponentVariants = (component, variants) => {
     const componentVariants = [];
     component.variants.forEach(variant => {
@@ -420,42 +409,30 @@ const getButtons = async(editor) => {
     return buttons;
 };
 
-const getVariants = async() => {
-    const variants = await fetchMany([{
-        methodname: 'tiny_c4l_get_variants',
-        args: {},
-    }])[0];
-
-    const indexedVariants = [];
-    variants.forEach(variant => {
-        indexedVariants[variant.name] = variant;
-    });
-
-    return indexedVariants;
-};
-
-const getComponents = async() => {
-    const components = await fetchMany([{
-        methodname: 'tiny_c4l_get_components',
+const getC4LData = async() => {
+    const data = await fetchMany([{
+        methodname: 'tiny_c4l_get_c4l_data',
         args: {},
     }])[0];
 
     // TODO error handling
     const indexedComponents = [];
-    components.forEach(component => {
+    data.components.forEach(component => {
         indexedComponents[component.id] = component;
     });
-    return indexedComponents;
-};
 
-const getCategories = async() => {
-    const categories = await fetchMany([{
-        methodname: 'tiny_c4l_get_compcats',
-        args: {},
-    }])[0];
-    return categories;
-};
+    const indexedVariants = [];
+    data.variants.forEach(variant => {
+        indexedVariants[variant.name] = variant;
+    });
 
+    return {
+        components: indexedComponents,
+        variants: indexedVariants,
+        categories: data.categories,
+        flavors: data.flavors,
+    };
+};
 
 /**
  * Get variants for the dialogue.
