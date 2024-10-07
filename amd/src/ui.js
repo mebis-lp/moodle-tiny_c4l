@@ -418,6 +418,7 @@ const getC4LData = async() => {
     // TODO error handling
     const indexedComponents = [];
     data.components.forEach(component => {
+        console.log(component);
         indexedComponents[component.id] = component;
     });
 

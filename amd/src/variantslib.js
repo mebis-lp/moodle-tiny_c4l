@@ -64,7 +64,7 @@ export const loadVariantPreferences = async() => {
 
             if (rawPreferences !== null) {
                 Object.keys(rawPreferences).forEach(preference => {
-                    comp = COMPONENTS.find(component => component.id == preference);
+                    comp = COMPONENTS.find(component => component !== undefined && component.id == preference);
                     if (comp != undefined) {
                         variantPreferences[comp.name] = [];
                         rawPreferences[preference].forEach((variant) => {
