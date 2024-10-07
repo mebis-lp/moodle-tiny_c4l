@@ -142,7 +142,7 @@ abstract class base_form extends dynamic_form {
             $source = new \stdClass();
         }
         // Handle compcat images.
-        if ($this->formtype === 'compcat') {
+        if ($this->formtype == 'compcat') {
             $draftitemid = file_get_submitted_draft_itemid('compcatfiles');
             file_prepare_draft_area(
                 $draftitemid,
@@ -150,7 +150,7 @@ abstract class base_form extends dynamic_form {
                 'tiny_c4l',
                 'images',
                 $id,
-                ['subdirs' => 1, 'accepted_types' => ['image']],
+                ['subdirs' => 1, 'accepted_types' => ['web_image']],
             );
             $source->compcatfiles = $draftitemid;
         }

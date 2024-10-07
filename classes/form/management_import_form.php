@@ -32,7 +32,7 @@ class management_import_form extends base_form {
             'backupfile',
             get_string('file'),
             null,
-            ['accepted_types' => 'xml']
+            ['accepted_types' => 'xml,zip']
         );
     }
 
@@ -58,10 +58,29 @@ class management_import_form extends base_form {
      * @return array Returns whether a new source was created.
      */
     public function process_dynamic_submission(): array {
-        $xmlcontent = $this->get_file_content('backupfile');
+        global $DB;
+        $fs = get_file_storage();
+        $data = $this->get_data();
+        $draftitemid = $data->backupfile;
+        $files = file_get_drafarea_files($draftitemid);
+        $file = reset($files->list);
+        $file = $fs->get_file_by_id($file->id);
+        if($file->get_mimetype() == 'application/zip') {
+            $fp = get_file_packer('application/zip');
+            $fp->extract_to_storage($file, SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/');
+            $xmlfile = $fs->get_file(SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/', 'tiny_c4l_export.xml');
+            $xmlcontent = $xmlfile->get_content();
+        } else {
+            $xmlcontent = $file->get_content();
+        }
 
         $manager = new \tiny_c4l\manager();
-        $manager->import($xmlcontent);
+        $manager->importxml($xmlcontent);
+        $categories = $DB->get_records('tiny_c4l_compcat');
+        foreach ($categories as $category) {
+            $categoryfiles = $fs->get_directory_files(SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/' . $category->name . '/', true, false);
+            $manager->importfiles($categoryfiles, $category->id, $category->name);
+        }
 
         return [
             'update' => true,

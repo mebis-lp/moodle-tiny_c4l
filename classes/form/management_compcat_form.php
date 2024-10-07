@@ -25,6 +25,7 @@ namespace tiny_c4l\form;
  */
 class management_compcat_form extends base_form {
     public function definition() {
+        global $PAGE;
         $mform =& $this->_form;
 
         // Set this variable to access correct db table.
@@ -45,7 +46,7 @@ class management_compcat_form extends base_form {
         $mform->addElement('textarea', 'css', get_string('css', 'tiny_c4l'));
         $mform->setType('css', PARAM_TEXT);
 
-        $options = ['accepted_types' => ['svg']];
+        $options = ['accepted_types' => ['web_image'], 'subdirs' => 1];
         $mform->addElement('filemanager', 'compcatfiles', get_string('files', 'tiny_c4l'), null, $options);
     }
 }

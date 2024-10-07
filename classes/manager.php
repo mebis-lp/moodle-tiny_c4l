@@ -21,6 +21,8 @@ use moodle_exception;
 use stored_file;
 use xml_writer;
 
+use function DI\get;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -116,7 +118,34 @@ class manager {
         return $xmlstr;
     }
 
-    public function import(string $xmlcontent): bool {
+    public function importfiles($files, $categoryid, $categoryname = '') {
+        $fs = get_file_storage();
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                continue;
+            }
+            $newfilepath = ($categoryname ? str_replace('/' . $categoryname, '', $file->get_filepath()) : $file->get_filepath());
+            if ($oldfile = $fs->get_file(SYSCONTEXTID, 'tiny_c4l', 'images', $categoryid, $newfilepath, $file->get_filename())) {
+                if ($oldfile->get_contenthash() != $file->get_contenthash()) {
+                    $oldfile->replace_file_with($file);
+                }
+            } else {
+                $newfile = $fs->create_file_from_storedfile([
+                    'contextid' => SYSCONTEXTID,
+                    'component' => 'tiny_c4l',
+                    'filearea' => 'images',
+                    'itemid' => $categoryid,
+                    'filepath' => $newfilepath,
+                    'filename' => $file->get_filename(),
+                ], $file);
+                if (!$newfile) {
+                    throw new moodle_exception(get_string('error_fileimport', 'tiny_c4l', $newfilepath . $file->get_filename()));
+                }
+            }
+        }
+    }
+
+    public function importxml(string $xmlcontent): bool {
         global $DB;
 
         try {
