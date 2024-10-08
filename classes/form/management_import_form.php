@@ -63,9 +63,17 @@ class management_import_form extends base_form {
         $data = $this->get_data();
         $draftitemid = $data->backupfile;
         $files = file_get_drafarea_files($draftitemid);
-        $file = reset($files->list);
+        if (count($files->list) > 0) {
+            do {
+                $file = array_shift($files->list);
+            } while (count($files->list) > 0 && $file->is_directory());
+        } else {
+            return [
+                'update' => false,
+            ];
+        }
         $file = $fs->get_file_by_id($file->id);
-        if($file->get_mimetype() == 'application/zip') {
+        if ($file->get_mimetype() == 'application/zip') {
             $fp = get_file_packer('application/zip');
             $fp->extract_to_storage($file, SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/');
             $xmlfile = $fs->get_file(SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/', 'tiny_c4l_export.xml');
