@@ -72,7 +72,7 @@ class management_import_form extends base_form {
                 'update' => false,
             ];
         }
-        $file = $fs->get_file_by_id($file->id);
+        $file = $fs->get_file_by_hash($file->get_contenthash());
         if ($file->get_mimetype() == 'application/zip') {
             $fp = get_file_packer('application/zip');
             $fp->extract_to_storage($file, SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/');
