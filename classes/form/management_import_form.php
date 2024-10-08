@@ -62,17 +62,14 @@ class management_import_form extends base_form {
         $fs = get_file_storage();
         $data = $this->get_data();
         $draftitemid = $data->backupfile;
-        $files = file_get_drafarea_files($draftitemid);
-        if (count($files->list) > 0) {
-            do {
-                $file = array_shift($files->list);
-            } while (count($files->list) > 0 && $file->is_directory());
-        } else {
-            return [
-                'update' => false,
-            ];
+        file_save_draft_area_files($draftitemid, SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid);
+        $files = $fs->get_directory_files(SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/', false, false);
+        do {
+            $file = array_pop($files);
+        } while ($file !== null && $file->is_directory());
+        if ($file === null) {
+            throw new \moodle_exception('errorbackupfile', 'tiny_c4l');
         }
-        $file = $fs->get_file_by_hash($file->get_contenthash());
         if ($file->get_mimetype() == 'application/zip') {
             $fp = get_file_packer('application/zip');
             $fp->extract_to_storage($file, SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/');
