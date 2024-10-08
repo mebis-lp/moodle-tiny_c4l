@@ -43,8 +43,8 @@ class management_compcat_form extends base_form {
         $mform->addElement('text', 'displayorder', get_string('displayorder', 'tiny_c4l'));
         $mform->setType('displayorder', PARAM_INT);
 
-        $mform->addElement('textarea', 'css', get_string('css', 'tiny_c4l'));
-        $mform->setType('css', PARAM_TEXT);
+        $mform->addElement('editor', 'css', get_string('css', 'tiny_c4l'), null, null, ['size' => '10rem', 'lang' => 'css']);
+        $mform->setType('css', PARAM_RAW);
 
         $options = ['accepted_types' => ['web_image'], 'subdirs' => 1];
         $mform->addElement('filemanager', 'compcatfiles', get_string('files', 'tiny_c4l'), null, $options);

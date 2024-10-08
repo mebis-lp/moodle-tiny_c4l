@@ -92,6 +92,8 @@ abstract class base_form extends dynamic_form {
         $formdata->timemodified = time();
         $newrecord = empty($formdata->id);
 
+        $this->postprocess_editors($formdata);
+
         $table = 'tiny_c4l_' . $this->formtype;
         // Update existing records.
         if ($newrecord) {
@@ -154,7 +156,21 @@ abstract class base_form extends dynamic_form {
             );
             $source->compcatfiles = $draftitemid;
         }
+
+        $this->preprocess_editors($source);
+
         $this->set_data($source);
+    }
+
+    private function preprocess_editors(&$formdata) {
+        $formdata->css = [
+            'text' => $formdata->css,
+            'format' => 90,
+        ];
+    }
+
+    private function postprocess_editors(&$formdata) {
+        $formdata->css = $formdata->css['text'] ?? '';
     }
 
     /**
