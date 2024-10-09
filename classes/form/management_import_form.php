@@ -87,6 +87,8 @@ class management_import_form extends base_form {
             $manager->importfiles($categoryfiles, $category->id, $category->name);
         }
 
+        \tiny_c4l\local\utils::purge_css_cache();
+
         return [
             'update' => true,
         ];

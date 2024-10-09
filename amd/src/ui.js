@@ -56,6 +56,7 @@ let langStrings = {};
 
 let currentFlavor = '';
 let currentCategoryId = 1;
+let lastFlavor = [];
 
 /**
  * Handle action
@@ -151,6 +152,12 @@ const displayDialogue = async(editor) => {
             });
         }
     });
+
+    if (filters.length > 0) {
+        filters[0].click();
+    }
+
+    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : '');
 };
 
 /**
@@ -161,7 +168,7 @@ const displayDialogue = async(editor) => {
  */
 const handleButtonFilterClick = (event, modal) => {
     const button = event.target.closest('button');
-    const currentCategoryId = button.dataset.filter;
+    currentCategoryId = button.dataset.filter;
 
     const buttons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-filters button');
     buttons.forEach(node => node.classList.remove('c4l-button-filter-enabled'));
@@ -169,8 +176,27 @@ const handleButtonFilterClick = (event, modal) => {
 
     showFlavors(modal, currentCategoryId);
 
+    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : '');
+
     // Show/hide component buttons.
     showCategoryButtons(modal, currentCategoryId);
+};
+
+const clickFlavor = (modal, flavor = '') => {
+    if (flavor == '') {
+        let availableFlavors = modal.getRoot()[0].querySelectorAll('.c4l-button-flavor:not(.c4l-hidden)');
+        if (availableFlavors.length > 0) {
+            availableFlavors[0].click();
+        }
+        return;
+    }
+
+    let flavorButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-flavors button');
+    flavorButtons.forEach(node => {
+        if (node.dataset.flavor == flavor) {
+            node.click();
+        }
+    });
 };
 
 const showFlavors = (modal, categoryId) => {
@@ -189,14 +215,19 @@ const showFlavors = (modal, categoryId) => {
 const handleButtonFlavorClick = (event, modal) => {
     const button = event.target.closest('button');
     currentFlavor = button.dataset.flavor;
+    lastFlavor[currentCategoryId] = currentFlavor;
 
     const buttons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-flavors button');
     buttons.forEach(node => node.classList.remove('c4l-button-flavor-enabled'));
     button.classList.add('c4l-button-flavor-enabled');
     const componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button');
     componentButtons.forEach(componentButton => {
-        // TODO remove old class :)
-        componentButton.querySelector('.c4l-button-text').classList.add(currentFlavor);
+        // Remove previous flavor.
+        if (componentButton.dataset.flavor != undefined) {
+            componentButton.classList.remove(componentButton.dataset.flavor);
+        }
+        componentButton.classList.add(currentFlavor);
+        componentButton.dataset.flavor = currentFlavor;
     });
 };
 
@@ -418,7 +449,6 @@ const getC4LData = async() => {
     // TODO error handling
     const indexedComponents = [];
     data.components.forEach(component => {
-        console.log(component);
         indexedComponents[component.id] = component;
     });
 

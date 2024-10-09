@@ -25,19 +25,25 @@ namespace tiny_c4l\local;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class utils {
+    /** @var string TINY_C4L_CACHE_AREA the cache area for the tiny_c4l plugin */
     public const TINY_C4L_CACHE_AREA = 'tiny_c4l_css';
 
+    /** @var string TINY_C4L_CSS_CACHE_KEY the cache key for the css code */
     public const TINY_C4L_CSS_CACHE_KEY = 'css';
 
+    /** @var string TINY_C4L_CSS_CACHE_REV the cache key for the css revision */
     public const TINY_C4L_CSS_CACHE_REV = 'cssrev';
 
+    /**
+     * Get all components.
+     *
+     * @return array all components
+     */
     public static function get_all_components(): array {
         global $DB;
         $componentrecords = $DB->get_records('tiny_c4l_component');
         $components = [];
         foreach ($componentrecords as $record) {
-            // TODO export which flavors are allowed
-
             $components[] = [
                     'id' => $record->id,
                     'name' => $record->name,
@@ -54,18 +60,33 @@ class utils {
         return $components;
     }
 
+    /**
+     * Get all variants.
+     *
+     * @return array all variants
+     */
     public static function get_all_variants(): array {
         global $DB;
         $variants = $DB->get_records('tiny_c4l_variant');
         return array_values($variants);
     }
 
+    /**
+     * Get all component categories.
+     *
+     * @return array all component categories
+     */
     public static function get_all_compcats(): array {
         global $DB;
         $categories = $DB->get_records('tiny_c4l_compcat');
         return array_values($categories);
     }
 
+    /**
+     * Get all flavors.
+     *
+     * @return array all flavors
+     */
     public static function get_all_flavors(): array {
         global $DB;
         $flavors = $DB->get_records('tiny_c4l_flavor');
@@ -77,6 +98,11 @@ class utils {
         return $flavorsbyname;
     }
 
+    /**
+     * Get all data for the c4l editor.
+     *
+     * @return array all data for the c4l editor
+     */
     public static function get_c4l_data(): array {
         $components = self::get_all_components();
         $compcats = self::get_all_compcats();

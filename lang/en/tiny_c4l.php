@@ -61,6 +61,7 @@ $string['enablepreview'] = 'Enable preview';
 $string['enablepreview_desc'] = 'If enabled, a preview is showed when you hover the mouse cursor over each component.';
 $string['error_export'] = 'Error creating export file';
 $string['error_fileimport'] = 'Error importing file "{$a}"';
+$string['errorbackupfile'] = 'Error in backup file';
 $string['errorcompcat'] = '**compcat** cant be empty';
 $string['errordisplayname'] = 'Displayname cant be empty';
 $string['errorname'] = 'Name cant be empty';

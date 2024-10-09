@@ -35,6 +35,17 @@ class hook_callbacks {
      * @param before_http_headers $beforehttpheadershook
      */
     public static function add_c4l_stylesheet_to_dom(\core\hook\output\before_http_headers $beforehttpheadershook): void {
+        // Don't run during initial install.
+        if (during_initial_install()) {
+            return;
+        }
+        // Only run if plugin is enabled.        
+        $pluginmanager = \core_plugin_manager::instance();
+        $plugins = $pluginmanager->get_enabled_plugins('tiny');
+        if (!in_array('c4l', $plugins)) {
+            return;
+        }
+
         $cache = \cache::make('tiny_c4l', utils::TINY_C4L_CACHE_AREA);
         $rev = $cache->get(utils::TINY_C4L_CSS_CACHE_REV);
         if (!$rev) {
