@@ -53,7 +53,7 @@ class management_component_form extends base_form {
         $mform->addElement('text', 'imageclass', get_string('imageclass', 'tiny_c4l'), ['size' => '255']);
         $mform->setType('imageclass', PARAM_TEXT);
 
-        $mform->addElement('textarea', 'code', get_string('code', 'tiny_c4l'));
+        $mform->addElement($this->codemirror_present() ? 'editor' : 'textarea', 'code', get_string('code', 'tiny_c4l'));
         $mform->setType('code', PARAM_RAW);
         $mform->addHelpButton('code', 'code', 'tiny_c4l');
 
@@ -69,10 +69,10 @@ class management_component_form extends base_form {
         $mform->addElement('text', 'displayorder', get_string('displayorder', 'tiny_c4l'));
         $mform->setType('displayorder', PARAM_INT);
 
-        $mform->addElement('textarea', 'css', get_string('css', 'tiny_c4l'));
-        $mform->setType('css', PARAM_TEXT);
+        $mform->addElement($this->codemirror_present() ? 'editor' : 'textarea', 'css', get_string('css', 'tiny_c4l'));
+        $mform->setType('css', PARAM_RAW);
 
-        $mform->addElement('textarea', 'js', get_string('js', 'tiny_c4l'));
-        $mform->setType('js', PARAM_TEXT);
+        $mform->addElement($this->codemirror_present() ? 'editor' : 'textarea', 'js', get_string('js', 'tiny_c4l'));
+        $mform->setType('js', PARAM_RAW);
     }
 }

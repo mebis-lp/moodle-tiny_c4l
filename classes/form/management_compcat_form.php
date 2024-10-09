@@ -25,7 +25,6 @@ namespace tiny_c4l\form;
  */
 class management_compcat_form extends base_form {
     public function definition() {
-        global $PAGE;
         $mform =& $this->_form;
 
         // Set this variable to access correct db table.
@@ -43,7 +42,7 @@ class management_compcat_form extends base_form {
         $mform->addElement('text', 'displayorder', get_string('displayorder', 'tiny_c4l'));
         $mform->setType('displayorder', PARAM_INT);
 
-        $mform->addElement('editor', 'css', get_string('css', 'tiny_c4l'), null, null, ['size' => '10rem', 'lang' => 'css']);
+        $mform->addElement($this->codemirror_present() ? 'editor' : 'textarea', 'css', get_string('css', 'tiny_c4l'));
         $mform->setType('css', PARAM_RAW);
 
         $options = ['accepted_types' => ['web_image'], 'subdirs' => 1];

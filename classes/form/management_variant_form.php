@@ -39,10 +39,10 @@ class management_variant_form extends base_form {
         $mform->addElement('text', 'displayname', get_string('displayname', 'tiny_c4l'), ['size' => '255']);
         $mform->setType('displayname', PARAM_TEXT);
 
-        $mform->addElement('textarea', 'content', get_string('content', 'tiny_c4l'));
-        $mform->setType('content', PARAM_TEXT);
+        $mform->addElement($this->codemirror_present() ? 'editor' : 'textarea', 'content', get_string('content', 'tiny_c4l'));
+        $mform->setType('content', PARAM_RAW);
 
-        $mform->addElement('textarea', 'css', get_string('css', 'tiny_c4l'));
-        $mform->setType('css', PARAM_TEXT);
+        $mform->addElement($this->codemirror_present() ? 'editor' : 'textarea', 'css', get_string('css', 'tiny_c4l'));
+        $mform->setType('css', PARAM_RAW);
     }
 }

@@ -32,6 +32,17 @@ abstract class base_form extends dynamic_form {
     abstract public function definition();
 
     /**
+     * Checks if Codemirror editor plugin is present
+     *
+     * @return bool
+     */
+    protected function codemirror_present(): bool {
+        $pluginmanager = \core_plugin_manager::instance();
+        $plugins = $pluginmanager->get_enabled_plugins('editor');
+        return in_array('codemirror', $plugins);
+    }
+
+    /**
      * Returns context where this form is used
      *
      * @return context
@@ -162,15 +173,65 @@ abstract class base_form extends dynamic_form {
         $this->set_data($source);
     }
 
+    /**
+     * Preprocess form data before loading the form
+     *
+     * @param object $formdata
+     */
     private function preprocess_editors(&$formdata) {
-        $formdata->css = [
-            'text' => $formdata->css,
-            'format' => 90,
-        ];
+        $form = $this->_form;
+        $cssel = $form->_elements[$form->_elementIndex['css']] ?? null;
+        $jsel = $form->_elements[$form->_elementIndex['js']] ?? null;
+        $htmlel = $form->_elements[$form->_elementIndex['content']] ?? null;
+        $codeel = $form->_elements[$form->_elementIndex['code']] ?? null;
+
+        if ($cssel && $cssel->_type == 'editor') {
+            $formdata->css = [
+                'text' => $formdata->css,
+                'format' => 90,
+            ];
+        }
+
+        if ($jsel && $jsel->_type == 'editor') {
+            $formdata->js = [
+                'text' => $formdata->js,
+                'format' => 91,
+            ];
+        }
+
+        if ($htmlel && $htmlel->_type == 'editor') {
+            $formdata->content = [
+                'text' => $formdata->content,
+                'format' => 92,
+            ];
+        }
+        
+        if ($codeel && $codeel->_type == 'editor') {
+            $formdata->code = [
+                'text' => $formdata->code,
+                'format' => 92,
+            ];
+        }
     }
 
+    /**
+     * Postprocess form data after form submission
+     *
+     * @param object $formdata
+     */
     private function postprocess_editors(&$formdata) {
-        $formdata->css = $formdata->css['text'] ?? '';
+        if (isset($formdata->css['text'])) {
+            $formdata->css = $formdata->css['text'];
+        }
+        if (isset($formdata->js['text'])) {
+            $formdata->js = $formdata->js['text'];
+        }
+        if (isset($formdata->content['text'])) {
+            $formdata->content = $formdata->content['text'];
+        }
+        if (isset($formdata->code['text'])) {
+            $formdata->code = $formdata->code['text'];
+        }
     }
 
     /**
