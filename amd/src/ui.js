@@ -143,14 +143,14 @@ const displayDialogue = async(editor) => {
         node.addEventListener('click', (event) => {
             handleVariantClick(event, modal);
         });
-        if (previewC4L) {
-            node.addEventListener('mouseenter', (event) => {
-                handleVariantMouseEvent(event, modal, true);
-            });
-            node.addEventListener('mouseleave', (event) => {
-                handleVariantMouseEvent(event, modal, false);
-            });
-        }
+        // if (previewC4L) {
+        //     node.addEventListener('mouseenter', (event) => {
+        //         handleVariantMouseEvent(event, modal, true);
+        //     });
+        //     node.addEventListener('mouseleave', (event) => {
+        //         handleVariantMouseEvent(event, modal, false);
+        //     });
+        // }
     });
 
     if (filters.length > 0) {
@@ -407,7 +407,7 @@ const getComponentVariants = (component, variants) => {
             componentVariants.push({
                 name: variant,
                 state: 'off',
-                imageClass: 'c4l-' + variant + '-variant-off',
+                imageClass: variant + '-variant-off',
                 title: langStrings.get(variant),
                 content: variants[variant].content,
             });
