@@ -648,12 +648,6 @@ const getAllStrings = async() => {
     const compRegex = /{{#([^}]*)}}/g;
 
     components.forEach(element => {
-        keys.push(element.name);
-        element.variants.forEach(variant => {
-            if (keys.indexOf(variant) === -1) {
-                keys.push(variant);
-            }
-        });
         // Get lang strings from components.
         [...element.code.matchAll(compRegex)].forEach(strLang => {
             if (keys.indexOf(strLang[1]) === -1) {
