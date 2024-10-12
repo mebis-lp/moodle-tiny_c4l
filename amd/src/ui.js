@@ -220,7 +220,7 @@ const handleButtonFlavorClick = (event, modal) => {
     const buttons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-flavors button');
     buttons.forEach(node => node.classList.remove('c4l-button-flavor-enabled'));
     button.classList.add('c4l-button-flavor-enabled');
-    const componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button');
+    const componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button[data-');
     componentButtons.forEach(componentButton => {
         // Remove previous flavor.
         if (componentButton.dataset.flavor != undefined) {
@@ -228,6 +228,14 @@ const handleButtonFlavorClick = (event, modal) => {
         }
         componentButton.classList.add(currentFlavor);
         componentButton.dataset.flavor = currentFlavor;
+        if (
+            (componentButton.dataset.flavorlist == '' || componentButton.dataset.flavorlist.split(',').includes(currentFlavor)) && 
+            componentButton.dataset.category == currentCategoryId
+        ) {
+            componentButton.classList.remove('c4l-hidden');
+        } else {
+            componentButton.classList.add('c4l-hidden');
+        }
     });
 };
 
@@ -434,6 +442,8 @@ const getButtons = async(editor) => {
             imageClass: 'c4l-' + component.imageclass,
             htmlcode: component.code,
             variants: getComponentVariants(component, variants),
+            flavorlist: component.flavors.join(','),
+            category: component.compcat,
         });
     });
 

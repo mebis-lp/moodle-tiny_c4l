@@ -50,11 +50,12 @@ class utils {
                     'displayname' => $record->displayname,
                     'compcat' => $record->compcat,
                     'imageclass' => $record->imageclass,
-                    'code' => $record->code,
+                    'code' => self::replace_pluginfile_urls($record->code, true),
                     'text' => $record->text,
                     'displayorder' => $record->displayorder,
                     'flavors' => explode(',', $record->flavors),
                     'variants' => explode(',', $record->variants),
+                    'js' => self::replace_pluginfile_urls($record->js, true),
             ];
         }
         return $components;
@@ -68,6 +69,9 @@ class utils {
     public static function get_all_variants(): array {
         global $DB;
         $variants = $DB->get_records('tiny_c4l_variant');
+        foreach ($variants as $variant) {
+            $variant->content = self::replace_pluginfile_urls($variant->content, true);
+        }
         return array_values($variants);
     }
 
@@ -94,6 +98,7 @@ class utils {
         foreach ($flavors as $flavor) {
             $flavorsbyname[$flavor->name] = $flavor;
             $flavorsbyname[$flavor->name]->categories = [];
+            $flavorsbyname[$flavor->name]->content = self::replace_pluginfile_urls($flavor->content, true);
         }
         return $flavorsbyname;
     }
@@ -148,6 +153,7 @@ class utils {
             fn($current, $add) => $current . PHP_EOL . $add,
             '/* This file contains the stylesheet for the tiny_c4l plugin.*/'
         );
+        $css = self::replace_pluginfile_urls($css, true);
         $clock = \core\di::get(\core\clock::class);
         $rev = $clock->time();
         $cache->set(self::TINY_C4L_CSS_CACHE_KEY, $css);
@@ -171,5 +177,21 @@ class utils {
     public static function get_css_from_cache(): string|false {
         $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
         return $cache->get(self::TINY_C4L_CSS_CACHE_KEY);
+    }
+
+    /**
+     * Replace @@PLUGINFILE@@ with the correct URL and vice versa.
+     *
+     * @param $content
+     * @param bool $realurl if true, get the real URL, otherwise replace it
+     */
+    public static function replace_pluginfile_urls(string $content, bool $realurl = false): string {
+        global $CFG;
+        if (!$realurl) {
+            $content = str_replace($CFG->wwwroot . '/pluginfile.php', '@@PLUGINFILE@@', $content);
+        } else {
+            $content = str_replace('@@PLUGINFILE@@', $CFG->wwwroot . '/pluginfile.php', $content);
+        }
+        return $content;
     }
 }

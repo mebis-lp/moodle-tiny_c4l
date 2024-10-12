@@ -17,6 +17,7 @@
 namespace tiny_c4l\form;
 
 use core\reportbuilder\local\entities\context;
+use tiny_c4l\local\utils;
 use core_form\dynamic_form;
 
 /**
@@ -180,6 +181,20 @@ abstract class base_form extends dynamic_form {
      */
     private function preprocess_editors(&$formdata) {
         $form = $this->_form;
+
+        if (isset($formdata->css)) {
+            $formdata->css = utils::replace_pluginfile_urls($formdata->css, true);
+        }
+        if (isset($formdata->js)) {
+            $formdata->js = utils::replace_pluginfile_urls($formdata->js, true);
+        }
+        if (isset($formdata->code)) {
+            $formdata->code = utils::replace_pluginfile_urls($formdata->code, true);
+        }
+        if (isset($formdata->content)) {
+            $formdata->content = utils::replace_pluginfile_urls($formdata->content, true);
+        }
+
         $cssel = $form->_elements[$form->_elementIndex['css']] ?? null;
         $jsel = $form->_elements[$form->_elementIndex['js']] ?? null;
         $htmlel = $form->_elements[$form->_elementIndex['content']] ?? null;
@@ -231,6 +246,18 @@ abstract class base_form extends dynamic_form {
         }
         if (isset($formdata->code['text'])) {
             $formdata->code = $formdata->code['text'];
+        }
+        if (isset($formdata->css)) {
+            $formdata->css = utils::replace_pluginfile_urls($formdata->css);
+        }
+        if (isset($formdata->js)) {
+            $formdata->js = utils::replace_pluginfile_urls($formdata->js);
+        }
+        if (isset($formdata->code)) {
+            $formdata->code = utils::replace_pluginfile_urls($formdata->code);
+        }
+        if (isset($formdata->content)) {
+            $formdata->content = utils::replace_pluginfile_urls($formdata->content);
         }
     }
 
