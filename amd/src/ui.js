@@ -176,10 +176,10 @@ const handleButtonFilterClick = (event, modal) => {
 
     showFlavors(modal, currentCategoryId);
 
-    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : '');
-
     // Show/hide component buttons.
     showCategoryButtons(modal, currentCategoryId);
+
+    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : '');
 };
 
 const clickFlavor = (modal, flavor = '') => {
@@ -220,7 +220,7 @@ const handleButtonFlavorClick = (event, modal) => {
     const buttons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-flavors button');
     buttons.forEach(node => node.classList.remove('c4l-button-flavor-enabled'));
     button.classList.add('c4l-button-flavor-enabled');
-    const componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button[data-');
+    const componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button');
     componentButtons.forEach(componentButton => {
         // Remove previous flavor.
         if (componentButton.dataset.flavor != undefined) {
@@ -229,7 +229,7 @@ const handleButtonFlavorClick = (event, modal) => {
         componentButton.classList.add(currentFlavor);
         componentButton.dataset.flavor = currentFlavor;
         if (
-            (componentButton.dataset.flavorlist == '' || componentButton.dataset.flavorlist.split(',').includes(currentFlavor)) && 
+            (componentButton.dataset.flavorlist == '' || componentButton.dataset.flavorlist.split(',').includes(currentFlavor)) &&
             componentButton.dataset.category == currentCategoryId
         ) {
             componentButton.classList.remove('c4l-hidden');
