@@ -41,7 +41,7 @@ class utils {
      */
     public static function get_all_components(): array {
         global $DB;
-        $componentrecords = $DB->get_records('tiny_c4l_component');
+        $componentrecords = $DB->get_records('tiny_c4l_component', null, 'displayorder');
         $components = [];
         foreach ($componentrecords as $record) {
             $components[] = [
@@ -78,7 +78,7 @@ class utils {
      */
     public static function get_all_compcats(): array {
         global $DB;
-        $categories = $DB->get_records('tiny_c4l_compcat');
+        $categories = $DB->get_records('tiny_c4l_compcat', null, 'displayorder');
         return array_values($categories);
     }
 
