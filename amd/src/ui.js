@@ -439,7 +439,7 @@ const getButtons = async(editor) => {
             id: component.id, // TODO do dynamically, maybe we do not need an id
             name: component.displayname,
             type: component.compcat,
-            imageClass: 'c4l-' + component.imageclass,
+            imageClass: 'c4l-' + component.name + '-icon',
             htmlcode: component.code,
             variants: getComponentVariants(component, variants),
             flavorlist: component.flavors.join(','),
