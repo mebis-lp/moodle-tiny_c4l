@@ -368,7 +368,11 @@ const handleVariantClick = (event, modal) => {
     event.stopPropagation();
     const variant = event.target.closest('span');
     const button = event.target.closest('button');
+
     updateVariantComponentState(variant, button, modal, false, true);
+
+    const node = modal.getRoot()[0].querySelector('div[data-id="code-preview-' + button.dataset.id + '"]');
+    node.innerHTML = updateComponentCode(components[button.dataset.id].code, button.dataset.id, 'Lorem ipsum');
 };
 
 /**
