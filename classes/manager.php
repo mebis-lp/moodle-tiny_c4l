@@ -20,6 +20,7 @@ use memory_xml_output;
 use moodle_exception;
 use stored_file;
 use xml_writer;
+use tiny_c4l\local\utils;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -123,6 +124,9 @@ class manager {
         $xmlwriter->end_tag('c4l');
         $xmlwriter->stop();
         $xmlstr = $xmloutput->get_allcontents();
+
+        // This is just here for compatibility reasons.
+        $xmlstr = utils::replace_pluginfile_urls($xmlstr);
 
         return $xmlstr;
     }
