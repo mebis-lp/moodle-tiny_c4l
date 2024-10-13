@@ -16,9 +16,9 @@
 
 namespace tiny_c4l\form;
 
-use core\reportbuilder\local\entities\context;
 use tiny_c4l\local\utils;
 use core_form\dynamic_form;
+use context;
 
 /**
  * Class base_form
@@ -48,7 +48,7 @@ abstract class base_form extends dynamic_form {
      *
      * @return context
      */
-    protected function get_context_for_dynamic_submission(): \context {
+    protected function get_context_for_dynamic_submission(): context {
         return \context_system::instance();
     }
 
@@ -91,6 +91,7 @@ abstract class base_form extends dynamic_form {
         global $DB;
 
         $context = $this->get_context_for_dynamic_submission();
+
         $formdata = $this->get_data();
 
         if (is_array($formdata->flavors)) {
@@ -123,7 +124,7 @@ abstract class base_form extends dynamic_form {
         if ($this->formtype === 'compcat') {
             file_save_draft_area_files(
                 $formdata->compcatfiles,
-                SYSCONTEXTID,
+                $context->id,
                 'tiny_c4l',
                 'images',
                 $recordid,
@@ -160,7 +161,7 @@ abstract class base_form extends dynamic_form {
             $draftitemid = file_get_submitted_draft_itemid('compcatfiles');
             file_prepare_draft_area(
                 $draftitemid,
-                SYSCONTEXTID,
+                $context->id,
                 'tiny_c4l',
                 'images',
                 $id,

@@ -20,6 +20,7 @@ use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
+use tiny_c4l\manager;
 
 /**
  * Webservice to delete tiny component entries.
@@ -60,8 +61,11 @@ class delete_item extends external_api {
         self::validate_context($systemcontext);
         require_capability('tiny/c4l:manage', $systemcontext);
 
-        // Delete source.
-        $DB->delete_records_select('tiny_c4l_' . $table, 'id = ?', [$id]);
+        if ($table == 'compcat') {
+            manager::delete_compcat($id);
+        } else {
+            $DB->delete_records_select('tiny_c4l_' . $table, 'id = ?', [$id]);
+        }
 
         return ['result' => true];
     }

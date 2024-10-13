@@ -35,6 +35,10 @@ class hook_callbacks {
      * @param before_http_headers $beforehttpheadershook
      */
     public static function add_c4l_stylesheet_to_dom(\core\hook\output\before_http_headers $beforehttpheadershook): void {
+        // Parameter to disable css delivery.
+        if (optional_param('tiny_c4l_disable', false, PARAM_BOOL)) {
+            return;
+        }
         // Don't run during initial install.
         if (during_initial_install()) {
             return;
