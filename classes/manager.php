@@ -43,7 +43,7 @@ class manager {
         'component' => 'tiny_c4l_component',
         'flavor' => 'tiny_c4l_flavor',
         'variant' => 'tiny_c4l_variant',
-        'component_flavor' => 'tiny_c4l_component_flavor',
+        //'component_flavor' => 'tiny_c4l_component_flavor',
     ];
 
     /** @var string Item. **/
@@ -217,9 +217,9 @@ class manager {
             self::import_variant($variant, $componentmap);
         }
 
-        foreach ($data['tiny_c4l_component_flavor'] as $component_flavor) {
-            self::import_component($component_flavor, $componentmap);
-        }
+        // foreach ($data['tiny_c4l_component_flavor'] as $component_flavor) {
+        //     self::import_component($component_flavor, $componentmap);
+        // }
 
         return true;
     }
@@ -266,7 +266,7 @@ class manager {
             $record['css'] = self::update_pluginfile_tags($oldid, $newid, $record['css']);
             $record['code'] = self::update_pluginfile_tags($oldid, $newid, $record['code']);
             $record['js'] = self::update_pluginfile_tags($oldid, $newid, $record['js']);
-            $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl']);
+            $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl'] ?? '');
         }
         // Right now the "name" column is not unique, so we need to check for the combination of name and compcat.
         $current = $DB->get_record('tiny_c4l_component', ['name' => $record['name'], 'compcat' => $record['compcat']]);
@@ -276,6 +276,18 @@ class manager {
         } else {
             $record['id'] = $DB->insert_record('tiny_c4l_component', $record);
         }
+
+        foreach (explode(',', $record['flavors']) as $flavor) {
+            if(empty($flavor)) {
+                continue;
+            }
+            $flavorrecord = [
+                'componentname' => $record['name'],
+                'flavorname' => $flavor,
+            ];
+            $DB->insert_record('tiny_c4l_comp_flavor', $flavorrecord);
+        }
+
         return $record['id'];
     }
 
@@ -317,7 +329,7 @@ class manager {
         foreach ($componentmap as $oldid => $newid) {
             $record['css'] = self::update_pluginfile_tags($oldid, $newid, $record['css']);
             $record['content'] = self::update_pluginfile_tags($oldid, $newid, $record['content']);
-            $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl']);
+            $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl'] ?? '');
         }
         if ($current) {
             $record['id'] = $current->id;
@@ -340,7 +352,7 @@ class manager {
         $record = (array) $record;
         $current = $DB->get_record('tiny_c4l_comp_flavor', ['component' => $record['component'], 'flavor' => $record['flavor']]);
         foreach ($componentmap as $oldid => $newid) {
-            $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl']);
+            $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl'] ?? '');
         }
         if ($current) {
             $record['id'] = $current->id;

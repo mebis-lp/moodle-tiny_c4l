@@ -87,6 +87,21 @@ class utils {
     }
 
     /**
+     * Get all component flavors.
+     *
+     * @return array all component flavors
+     */
+    public static function get_all_comp_flavors(): array {
+        global $DB;
+        $compflavors = $DB->get_records('tiny_c4l_comp_flavor', null, '', 'id, componentname, flavorname');
+        $components = [];
+        foreach ($compflavors as $compflavor) {
+            $components[$compflavor->componentname] = array_merge([$compflavor->flavorname], $components[$compflavor->componentname] ?? []);
+        }
+        return $components;
+    }
+
+    /**
      * Get all flavors.
      *
      * @return array all flavors
@@ -113,9 +128,11 @@ class utils {
         $compcats = self::get_all_compcats();
         $flavors = self::get_all_flavors();
         $variants = self::get_all_variants();
+        $componentflavors = self::get_all_comp_flavors();
 
-        foreach ($components as $component) {
-            foreach ($component['flavors'] as $flavor) {
+        foreach ($components as $key => $component) {
+            $components[$key]['flavors'] = $componentflavors[$component['name']] ?? [];
+            foreach ($components[$key]['flavors'] as $flavor) {
                 if (!isset($flavors[$flavor])) {
                     continue;
                 }
