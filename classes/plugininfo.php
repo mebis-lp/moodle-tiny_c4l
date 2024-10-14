@@ -21,6 +21,7 @@ use editor_tiny\plugin;
 use editor_tiny\plugin_with_buttons;
 use editor_tiny\plugin_with_configuration;
 use editor_tiny\plugin_with_menuitems;
+use tiny_c4l\local\utils;
 
 /**
  * Tiny c4l plugin for Moodle.
@@ -79,11 +80,26 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_conf
             $allowedcomps = array_merge($aimedcomps, $notintendedcomps);
         }
 
+        $cache = \cache::make('tiny_c4l', utils::TINY_C4L_CACHE_AREA);
+        $rev = $cache->get(utils::TINY_C4L_CSS_CACHE_REV);
+        if (!$rev) {
+            $rev = utils::rebuild_css_cache();
+        }
+        $cssurl = \moodle_url::make_pluginfile_url(
+            SYSCONTEXTID,
+            'tiny_c4l',
+            '',
+            null,
+            '',
+            'tiny_c4l_styles.css?rev=' . $rev
+        )->out();
+
         return [
             'isstudent' => $isstudent,
             'allowedcomps' => $allowedcomps,
             'showpreview' => ($showpreview == '1'),
             'viewc4l' => $viewc4l,
+            'cssurl' => $cssurl,
         ];
     }
 }
