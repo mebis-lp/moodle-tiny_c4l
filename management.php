@@ -36,12 +36,51 @@ require_capability('tiny/c4l:manage', context_system::instance());
 echo $OUTPUT->header();
 
 // Get all c4l components.
-// Use array_values so mustache can parse it.
-$compcats = array_values($DB->get_records('tiny_c4l_compcat'));
-$flavor = array_values($DB->get_records('tiny_c4l_flavor'));
-$component = array_values($DB->get_records('tiny_c4l_component'));
-$variant = array_values($DB->get_records('tiny_c4l_variant'));
+$dbcompcats = $DB->get_records('tiny_c4l_compcat');
+$dbflavor = $DB->get_records('tiny_c4l_flavor');
+$dbcompflavor = $DB->get_records('tiny_c4l_comp_flavor');
+$dbcomponent = $DB->get_records('tiny_c4l_component');
+$dbvariant = $DB->get_records('tiny_c4l_variant');
 
+// Use array_values so mustache can parse it.
+$compcats = array_values($dbcompcats);
+$flavor = array_values($dbflavor);
+$component = array_values($dbcomponent);
+$variant = array_values($dbvariant);
+
+// Build preview images for management.
+$flavorexamples = [];
+foreach ($component as $key => $value) {
+    // Build a additional array with flavors for mustache.
+    $flavors = [];
+    foreach ($dbcompflavor as $val) {
+        if ($val->componentname == $value->name) {
+            array_push($flavors, $val->flavorname);
+        }
+    }
+    $component[$key]->flavorsarr = $flavors;
+    $component[$key]->exampleflavorsarr = $component[$key]->flavorsarr;
+    if (count($component[$key]->flavorsarr) > 2) {
+        // Keep only the first two entries, and add ...
+        $component[$key]->exampleflavorsarr = array_slice($component[$key]->flavorsarr, 0, 2);
+        array_push($component[$key]->exampleflavorsarr, 'more');
+    }
+    // Save an example to show on a flavor.
+    foreach ($component[$key]->flavorsarr as $flav) {
+        $flavorexamples[$flav] = $component[$key]->name;
+    }
+    // Add the compcat name as js selector, use database array.
+    $component[$key]->compcatname = $dbcompcats[$value->compcat]->name;
+}
+
+// Use flavorexamples to add an example image to flavors.
+foreach ($flavor as $key => $value) {
+    if (isset($flavorexamples[$value->name])) {
+        $flavor[$key]->example = $flavorexamples[$value->name];
+    }
+}
+
+// Use empty array to create an add item.
 $addentry = [];
 array_push($compcats, $addentry);
 array_push($flavor, $addentry);

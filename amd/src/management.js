@@ -34,6 +34,14 @@ export const init = async() => {
             deleteModal(e, element.dataset.id, element.dataset.title, element.dataset.table);
         });
     });
+
+    // Add listener to select compcat to show corresponding items.
+    let compcats = document.getElementsByClassName('compcat');
+    compcats.forEach(element => {
+        element.addEventListener('click', async(e) => {
+            showItems(e, element.dataset.compcat);
+        });
+    });
 };
 
 /**
@@ -137,3 +145,45 @@ export const deleteItem = (
         id,
         table,
 }}])[0];
+
+/**
+ * Show items after clicking a compcat.
+ * @param {*} e
+ * @param {*} compcat
+ */
+function showItems(e, compcat) {
+    // But first hide all items.
+    let itemsHide = document.querySelectorAll('.flavor, .component, .variant');
+    itemsHide.forEach(element => {
+        element.classList.add('hidden');
+    });
+
+    // Show component with compcat name and read the flavors.
+    let itemsShow = document.getElementsByClassName(compcat);
+    let usedFlavors = [];
+    itemsShow.forEach(element => {
+        element.classList.remove('hidden');
+        // Get all flavors to show.
+        let flavors = element.dataset.flavors.split(' ');
+        for (let value of flavors) {
+            if (!usedFlavors.includes(value) && value.length != 0) {
+                usedFlavors.push(value);
+            }
+        }
+    });
+
+    // Show the flavors.
+    let flavorstring = usedFlavors.map(item => `.${item}`).join(', ');
+    if (flavorstring.length) {
+        let flavorsShow = document.querySelectorAll(flavorstring);
+        flavorsShow.forEach(element => {
+            element.classList.remove('hidden');
+        });
+    }
+
+    // Show add buttons.
+    let addsShow = document.getElementsByClassName('addcontainer');
+    addsShow.forEach(element => {
+        element.classList.remove('hidden');
+    });
+}
