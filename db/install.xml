@@ -1,8 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/editor/tiny/plugins/c4l/db" VERSION="20240903" COMMENT="XMLDB file for Moodle lib/editor/tiny/plugins/c4l"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../../../../lib/xmldb/xmldb.xsd"
->
+<XMLDB PATH="lib/editor/tiny/plugins/c4l/db" VERSION="20240903" COMMENT="XMLDB file for Moodle lib/editor/tiny/plugins/c4l" xsi:noNamespaceSchemaLocation="../../../../../../lib/xmldb/xmldb.xsd">
   <TABLES>
     <TABLE NAME="tiny_c4l_component" COMMENT="Stores the components">
       <FIELDS>
@@ -10,20 +6,20 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="displayname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="compcat" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="imageclass" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="code" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="text" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="variants" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="flavors" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="displayorder" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="css" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="js" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="iconurl" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="compcat" TYPE="foreign" FIELDS="compcat" REFTABLE="tiny_c4l_compcat" REFFIELDS="id"/>
+        <KEY NAME="name" TYPE="unique" FIELDS="name"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="tiny_c4l_compcat" COMMENT="Default comment for the table, please edit me">
@@ -38,6 +34,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="name" TYPE="unique" FIELDS="name"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="tiny_c4l_variant" COMMENT="Default comment for the table, please edit me">
@@ -47,11 +44,13 @@
         <FIELD NAME="displayname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="content" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="css" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="iconurl" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="name" TYPE="unique" FIELDS="name"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="tiny_c4l_flavor" COMMENT="Default comment for the table, please edit me">
@@ -66,6 +65,20 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="name" TYPE="unique" FIELDS="name"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="tiny_c4l_comp_flavor" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="componentname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="flavorname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="iconurl" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="tinyc4lcompflav_comp_fk" TYPE="foreign" FIELDS="componentname" REFTABLE="tiny_c4l_component" REFFIELDS="name"/>
+        <KEY NAME="tinyc4lcompflav_flav_fk" TYPE="foreign" FIELDS="flavorname" REFTABLE="tiny_c4l_flavor" REFFIELDS="name"/>
       </KEYS>
     </TABLE>
   </TABLES>

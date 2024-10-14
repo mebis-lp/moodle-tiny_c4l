@@ -52,9 +52,6 @@ class management_component_form extends base_form {
         $mform->addElement('select', 'compcat', get_string('compcat', 'tiny_c4l'), $compcats);
         $mform->setType('compcat', PARAM_INT);
 
-        $mform->addElement('text', 'imageclass', get_string('imageclass', 'tiny_c4l'), ['size' => '255']);
-        $mform->setType('imageclass', PARAM_TEXT);
-
         $mform->addElement($this->codemirror_present() ? 'editor' : 'textarea', 'code', get_string('code', 'tiny_c4l'));
         $mform->setType('code', PARAM_RAW);
         $mform->addHelpButton('code', 'code', 'tiny_c4l');

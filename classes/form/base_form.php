@@ -195,6 +195,9 @@ abstract class base_form extends dynamic_form {
         if (isset($formdata->content)) {
             $formdata->content = utils::replace_pluginfile_urls($formdata->content, true);
         }
+        if (isset($formdata->iconurl)) {
+            $formdata->iconurl = utils::replace_pluginfile_urls($formdata->iconurl, true);
+        }
 
         $cssel = $form->_elements[$form->_elementIndex['css']] ?? null;
         $jsel = $form->_elements[$form->_elementIndex['js']] ?? null;
@@ -259,6 +262,9 @@ abstract class base_form extends dynamic_form {
         }
         if (isset($formdata->content)) {
             $formdata->content = utils::replace_pluginfile_urls($formdata->content);
+        }
+        if (isset($formdata->iconurl)) {
+            $formdata->iconurl = utils::replace_pluginfile_urls($formdata->iconurl);
         }
     }
 

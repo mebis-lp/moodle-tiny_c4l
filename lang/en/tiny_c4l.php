@@ -78,6 +78,7 @@ $string['full-width'] = 'Full width';
 $string['gradingvalue'] = 'Grading value';
 $string['helper'] = 'Helper';
 $string['helplinktext'] = 'C4L helper';
+$string['iconurl'] = 'Icon URL';
 $string['imageclass'] = 'Imageclass';
 $string['import'] = 'Import';
 $string['inlinetag'] = 'Inline tag';

@@ -143,11 +143,26 @@ class utils {
     public static function rebuild_css_cache(): int {
         global $DB;
         $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
+        $iconcssentries = [];
         $componentcssentries = $DB->get_fieldset('tiny_c4l_component', 'css');
         $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
         $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
         $variantscssentries = $DB->get_fieldset('tiny_c4l_variant', 'css');
-        $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries, $variantscssentries);
+        $variants = $DB->get_records('tiny_c4l_variant', null, '', 'name, iconurl');
+        foreach ($variants as $variant) {
+            if (empty($variant->iconurl)) {
+                continue;
+            }
+            $iconcssentries[] = self::variant_icon_css($variant->name, self::replace_pluginfile_urls($variant->iconurl, true));
+        }
+        $componentflavors = $DB->get_records('tiny_c4l_comp_flavor');
+        foreach ($componentflavors as $componentflavor) {
+            if (empty($componentflavor->iconurl)) {
+                continue;
+            }
+            $iconcssentries[] .= self::button_icon_css($componentflavor->component, self::replace_pluginfile_urls($componentflavor->iconurl, true), $componentflavor->flavor);
+        }
+        $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries, $variantscssentries, $iconcssentries);
         $css = array_reduce(
             $cssentries,
             fn($current, $add) => $current . PHP_EOL . $add,
@@ -193,5 +208,37 @@ class utils {
             $content = str_replace('@@PLUGINFILE@@', $CFG->wwwroot . '/pluginfile.php', $content);
         }
         return $content;
+    }
+
+    /**
+     * Get the css for a button with an icon.
+     *
+     * @param string $buttonclass
+     * @param string $iconurl
+     * @return string
+     */
+    public static function variant_icon_css(string $variant, string $iconurl): string {
+        return <<<CSS
+        .c4l-button-variant[data-variant="{$variant}"] {
+            background-image: url('{$iconurl}');
+        }
+        CSS;
+    }
+
+    /**
+     * Get the css for an icon.
+     *
+     * @param string $buttonclass
+     * @param string $iconurl
+     * @param string $variant
+     * @return string
+     */
+    public static function button_icon_css(string $buttonclass, string $iconurl, string $variant = ''): string {
+        $variant = empty($variant) ? '' : '.' . $variant;
+        return <<<CSS
+        .c4l-{$buttonclass}-icon{$variant} .c4l-button-text::before {
+            content: url('{$iconurl}');
+        }
+        CSS;
     }
 }
