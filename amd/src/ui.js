@@ -187,6 +187,14 @@ const clickFlavor = (modal, flavor = '') => {
         let availableFlavors = modal.getRoot()[0].querySelectorAll('.c4l-button-flavor:not(.c4l-hidden)');
         if (availableFlavors.length > 0) {
             availableFlavors[0].click();
+        } else {
+            let componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button');
+            componentButtons.forEach(componentButton => {
+                if (componentButton.dataset.flavor != undefined) {
+                    componentButton.classList.remove(componentButton.dataset.flavor);
+                    componentButton.removeAttribute('data-flavor');
+                }
+            });
         }
         return;
     }
