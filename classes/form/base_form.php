@@ -94,10 +94,6 @@ abstract class base_form extends dynamic_form {
 
         $formdata = $this->get_data();
 
-        if (is_array($formdata->flavors)) {
-            $formdata->flavors = implode(',', $formdata->flavors);
-        }
-
         if (is_array($formdata->variants)) {
             $formdata->variants = implode(',', $formdata->variants);
         }
@@ -130,6 +126,20 @@ abstract class base_form extends dynamic_form {
                 $recordid,
                 ['subdirs' => 1, 'accepted_types' => ['image']]
             );
+        }
+
+        if ($this->formtype === 'component') {
+            if ($oldrecord) {
+                $DB->delete_records('tiny_c4l_comp_flavor', ['componentname' => $oldrecord->name]);
+            }
+            if (count($formdata->flavors) > 0) {
+                foreach ($formdata->flavors as $flavor) {
+                    $DB->insert_record('tiny_c4l_comp_flavor', [
+                        'componentname' => $formdata->name,
+                        'flavorname' => $flavor,
+                    ]);
+                }
+            }
         }
 
         // Purge CSS to show new one.
@@ -168,6 +178,13 @@ abstract class base_form extends dynamic_form {
                 ['subdirs' => 1, 'accepted_types' => ['web_image']],
             );
             $source->compcatfiles = $draftitemid;
+        }
+
+        if ($this->formtype === 'component') {
+            if (isset($source->name)) {
+                $flavors = $DB->get_fieldset_select('tiny_c4l_comp_flavor', 'flavorname', 'componentname = ?', ['componentname' => $source->name]);
+                $source->flavors = $flavors;;
+            }
         }
 
         $this->preprocess_editors($source);

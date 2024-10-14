@@ -43,7 +43,7 @@ class manager {
         'component' => 'tiny_c4l_component',
         'flavor' => 'tiny_c4l_flavor',
         'variant' => 'tiny_c4l_variant',
-        'comp_flavor' => 'tiny_c4l_comp_flavor',
+        'compflavor' => 'tiny_c4l_comp_flavor',
     ];
 
     /** @var string Item. **/
@@ -114,7 +114,7 @@ class manager {
                 $xmlwriter->begin_tag(static::$item);
                 foreach ($columns as $column) {
                     $name = $column->name;
-                    $xmlwriter->full_tag($name, $value->$name);
+                    $xmlwriter->full_tag($name, $value->$name ?? '');
                 }
                 $xmlwriter->end_tag(static::$item);
             }
