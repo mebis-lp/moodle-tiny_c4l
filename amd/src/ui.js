@@ -270,6 +270,9 @@ const updateComponentCode = (componentCode, selectedButton, placeholder) => {
         componentCode = componentCode.replace('{{FLAVOR}}', '');
     }
 
+    componentCode = componentCode.replace('{{COMPONENT}}', components[selectedButton].name);
+    componentCode = componentCode.replace('{{CATEGORY}}', categories[currentCategoryId].name);
+
     // Apply random IDs.
     componentCode = applyRandomID(componentCode);
 
@@ -471,10 +474,15 @@ const getC4LData = async() => {
         indexedVariants[variant.name] = variant;
     });
 
+    const indexedCategories = [];
+    data.categories.forEach(category => {
+        indexedCategories[category.id] = category
+    });
+
     return {
         components: indexedComponents,
         variants: indexedVariants,
-        categories: data.categories,
+        categories: indexedCategories,
         flavors: data.flavors,
     };
 };
