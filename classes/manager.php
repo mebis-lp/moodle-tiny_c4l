@@ -43,7 +43,7 @@ class manager {
         'component' => 'tiny_c4l_component',
         'flavor' => 'tiny_c4l_flavor',
         'variant' => 'tiny_c4l_variant',
-        'component_flavor' => 'tiny_c4l_component_flavor',
+        'component_flavor' => 'tiny_c4l_comp_flavor',
     ];
 
     /** @var string Item. **/
