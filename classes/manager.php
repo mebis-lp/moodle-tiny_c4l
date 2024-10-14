@@ -43,7 +43,7 @@ class manager {
         'component' => 'tiny_c4l_component',
         'flavor' => 'tiny_c4l_flavor',
         'variant' => 'tiny_c4l_variant',
-        //'component_flavor' => 'tiny_c4l_component_flavor',
+        'component_flavor' => 'tiny_c4l_component_flavor',
     ];
 
     /** @var string Item. **/
@@ -217,9 +217,9 @@ class manager {
             self::import_variant($variant, $componentmap);
         }
 
-        // foreach ($data['tiny_c4l_component_flavor'] as $component_flavor) {
-        //     self::import_component($component_flavor, $componentmap);
-        // }
+        foreach ($data['tiny_c4l_component_flavor'] as $component_flavor) {
+            self::import_component($component_flavor, $componentmap);
+        }
 
         return true;
     }
