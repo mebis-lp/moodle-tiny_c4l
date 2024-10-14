@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/editor/tiny/plugins/c4l/db" VERSION="20240903" COMMENT="XMLDB file for Moodle lib/editor/tiny/plugins/c4l" xsi:noNamespaceSchemaLocation="../../../../../../lib/xmldb/xmldb.xsd">
+<XMLDB PATH="lib/editor/tiny/plugins/c4l/db" VERSION="20240903" COMMENT="XMLDB file for Moodle lib/editor/tiny/plugins/c4l" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="tiny_c4l_component" COMMENT="Stores the components">
       <FIELDS>
