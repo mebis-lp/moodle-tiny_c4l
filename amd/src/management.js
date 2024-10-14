@@ -42,6 +42,12 @@ export const init = async() => {
             showItems(e, element.dataset.compcat);
         });
     });
+
+    // Add listener to manage component flavor relation.
+    let compflavor = document.getElementById('c4l_compflavor_button');
+    compflavor.addEventListener('click', async(e) => {
+        compflavorModal(e);
+    });
 };
 
 /**
@@ -94,6 +100,25 @@ function importModal(e) {
     modalForm.show();
 }
 
+/**
+ * Load modal to edit icon urls.
+ * @param {*} e
+ */
+function compflavorModal(e) {
+    e.preventDefault();
+    let title = getString('manage', 'tiny_c4l');
+
+    const modalForm = new ModalForm({
+        // Load import form.
+        formClass: "tiny_c4l\\form\\management_comp_flavor_form",
+        args: {},
+        modalConfig: {title: title},
+    });
+    // Reload page after submit.
+    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => location.reload());
+
+    modalForm.show();
+}
 
 /**
  * Show dynamic form to delete a source.

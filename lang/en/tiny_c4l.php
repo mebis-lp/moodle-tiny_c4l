@@ -87,6 +87,7 @@ $string['keyconcept'] = 'Key concept';
 $string['learningoutcomes'] = 'Learning outcomes';
 $string['linktomanagerdesc'] = 'Go to <a href="/lib/editor/tiny/plugins/c4l/management.php">management</a> to change stuff';
 $string['linktomanagername'] = 'Link to management';
+$string['manage'] = 'Manage';
 $string['management'] = 'Management';
 $string['menuitem_c4l'] = 'Components for Learning (C4L)';
 $string['min'] = 'min';
