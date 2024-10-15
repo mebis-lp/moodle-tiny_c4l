@@ -61,6 +61,7 @@ $string['enablepreview'] = 'Enable preview';
 $string['enablepreview_desc'] = 'If enabled, a preview is showed when you hover the mouse cursor over each component.';
 $string['error_export'] = 'Error creating export file';
 $string['error_fileimport'] = 'Error importing file "{$a}"';
+$string['error_import_component'] = 'Error importing component "{$a}"';
 $string['error_import_missing_table'] = 'Error while importing xml: missing table "{$a}"';
 $string['errorbackupfile'] = 'Error in backup file';
 $string['errorcompcat'] = '**compcat** cant be empty';

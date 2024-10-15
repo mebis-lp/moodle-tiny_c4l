@@ -17,6 +17,7 @@
 namespace tiny_c4l\form;
 
 use core_form\dynamic_form;
+use tiny_c4l\local\utils;
 use context;
 
 /**
@@ -98,7 +99,7 @@ class management_comp_flavor_form extends dynamic_form {
         foreach($formdata->id as $key => $id) {
             $record = new \stdClass();
             $record->id = $id;
-            $record->iconurl = $formdata->iconurl[$key];
+            $record->iconurl = utils::replace_pluginfile_urls($formdata->iconurl[$key]);
             $result &= $DB->update_record('tiny_c4l_comp_flavor', $record);
         }
 
@@ -120,7 +121,7 @@ class management_comp_flavor_form extends dynamic_form {
             $data['id'][] = $item->id;
             $data['componentname'][] = $item->componentname;
             $data['flavorname'][] = $item->flavorname;
-            $data['iconurl'][] = $item->iconurl;
+            $data['iconurl'][] = utils::replace_pluginfile_urls($item->iconurl, true);
         }
 
         $data['itemcount'] = count($compflavor);

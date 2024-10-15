@@ -217,8 +217,8 @@ class manager {
             self::import_variant($variant, $componentmap);
         }
 
-        foreach ($data['tiny_c4l_component_flavor'] as $component_flavor) {
-            self::import_component($component_flavor, $componentmap);
+        foreach ($data['tiny_c4l_comp_flavor'] as $component_flavor) {
+            self::import_component_flavor($component_flavor, $componentmap);
         }
 
         return true;
@@ -263,29 +263,34 @@ class manager {
             $record['compcat'] = $componentmap[$record['compcat']];
         }
         foreach ($componentmap as $oldid => $newid) {
-            $record['css'] = self::update_pluginfile_tags($oldid, $newid, $record['css']);
-            $record['code'] = self::update_pluginfile_tags($oldid, $newid, $record['code']);
-            $record['js'] = self::update_pluginfile_tags($oldid, $newid, $record['js']);
+            $record['css'] = self::update_pluginfile_tags($oldid, $newid, $record['css'] ?? '');
+            $record['code'] = self::update_pluginfile_tags($oldid, $newid, $record['code'] ?? '');
+            $record['js'] = self::update_pluginfile_tags($oldid, $newid, $record['js'] ?? '');
             $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl'] ?? '');
         }
-        // Right now the "name" column is not unique, so we need to check for the combination of name and compcat.
-        $current = $DB->get_record('tiny_c4l_component', ['name' => $record['name'], 'compcat' => $record['compcat']]);
+        $current = $DB->get_record('tiny_c4l_component', ['name' => $record['name']]);
         if ($current) {
             $record['id'] = $current->id;
             $DB->update_record('tiny_c4l_component', $record);
         } else {
-            $record['id'] = $DB->insert_record('tiny_c4l_component', $record);
+            try {
+                $record['id'] = $DB->insert_record('tiny_c4l_component', $record);
+            } catch (\Exception $e) {
+                throw new moodle_exception(get_string('error_import_component', 'tiny_c4l', $record['name']));
+            }
         }
 
-        foreach (explode(',', $record['flavors']) as $flavor) {
-            if(empty($flavor)) {
-                continue;
+        if ($record['flavors'] != '') {
+            foreach (explode(',', $record['flavors']) as $flavor) {
+                if($flavor == '') {
+                    continue;
+                }
+                $flavorrecord = [
+                    'componentname' => $record['name'],
+                    'flavorname' => $flavor,
+                ];
+                $DB->insert_record('tiny_c4l_comp_flavor', $flavorrecord);
             }
-            $flavorrecord = [
-                'componentname' => $record['name'],
-                'flavorname' => $flavor,
-            ];
-            $DB->insert_record('tiny_c4l_comp_flavor', $flavorrecord);
         }
 
         return $record['id'];
@@ -350,7 +355,7 @@ class manager {
     public static function import_component_flavor(array|object $record, array $componentmap): int {
         global $DB;
         $record = (array) $record;
-        $current = $DB->get_record('tiny_c4l_comp_flavor', ['component' => $record['component'], 'flavor' => $record['flavor']]);
+        $current = $DB->get_record('tiny_c4l_comp_flavor', ['componentname' => $record['componentname'], 'flavorname' => $record['flavorname']]);
         foreach ($componentmap as $oldid => $newid) {
             $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl'] ?? '');
         }
