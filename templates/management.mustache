@@ -113,12 +113,14 @@
             <div class="card h-100">
             <div class="card-body">
                 {{#id}}
-                    <div class="management preview">
-                        <div class="c4l-{{example}}-icon {{name}}">
-                            <div class="c4l-button-text"></div>
+                    <div>
+                        <div class="management preview">
+                            <div class="c4l-{{example}}-icon {{name}}">
+                                <div class="c4l-button-text"></div>
+                            </div>
                         </div>
+                        <h5 class="card-title">{{displayname}}</h5>
                     </div>
-                    <h5 class="card-title">{{displayname}}</h5>
                     <a class="edit" href="#" data-id={{id}} data-table="flavor">
                         {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
                     <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="flavor">
@@ -144,14 +146,16 @@
             <div class="card h-100">
             <div class="card-body">
                 {{#id}}
-                    <div class="management preview">
-                        {{#exampleflavorsarr}}
-                            <div class="c4l-{{name}}-icon {{.}}">
-                                <div class="c4l-button-text"></div>
-                            </div>
-                        {{/exampleflavorsarr}}
+                    <div>
+                        <div class="management preview">
+                            {{#exampleflavorsarr}}
+                                <div class="c4l-{{name}}-icon {{.}}">
+                                    <div class="c4l-button-text"></div>
+                                </div>
+                            {{/exampleflavorsarr}}
+                        </div>
+                        <h5 class="card-title">{{displayname}}</h5>
                     </div>
-                    <h5 class="card-title">{{displayname}}</h5>
                     <a class="edit" href="#" data-id={{id}} data-table="component">
                         {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
                     <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="component">
@@ -177,12 +181,14 @@
             <div class="card h-100">
             <div class="card-body">
                 {{#id}}
-                    <h5 class="card-title">{{displayname}}</h5>
-                    <a class="edit" href="#" data-id={{id}} data-table="variant">
-                        {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
-                    <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="variant">
-                        {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
-                    </a>
+                    <div>
+                        <h5 class="card-title">{{displayname}}</h5>
+                        <a class="edit" href="#" data-id={{id}} data-table="variant">
+                            {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                        <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="variant">
+                            {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                        </a>
+                    </div>
                 {{/id}}
                 {{^id}}
                     <a class="add" href="#" data-id=0 data-table="variant">

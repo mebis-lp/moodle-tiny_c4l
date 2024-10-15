@@ -47,6 +47,24 @@ export const init = async() => {
     let compflavor = document.getElementById('c4l_compflavor_button');
     compflavor.addEventListener('click', async(e) => {
         compflavorModal(e);
+
+    // Add image and text to item setting click area.
+    let enlargeItems = document.querySelectorAll(
+        '.flavor .card-body > div, .component .card-body > div, .variant .card-body > div'
+    );
+    enlargeItems.forEach(element => {
+        element.addEventListener('click', async(e) => {
+            console.log(e.target.querySelector('a.edit'));
+            let target = e.target.querySelector('a.edit');
+            console.log(target);
+            if (target) {
+                target.querySelector('a.edit').click();
+            } else {
+                target = e.target.closest('.item');
+                console.log(target.querySelector('a.edit'));
+                target.querySelector('a.edit').click();
+            }
+        });
     });
 };
 

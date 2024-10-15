@@ -34,5 +34,12 @@
 }
 
 .compcat:hover .card {
-    border: 1px solid darkgray;
+    border: 1px solid #787878;
+}
+
+.card-body > div:hover  {
+    cursor: pointer;
+    & + a.edit {
+        color: #094478;
+    }
 }
