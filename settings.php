@@ -72,7 +72,7 @@ if ($hassiteconfig) {
         // Add text with link to management as setting.
         $settings->add(new \tiny_c4l\admin\setting_customtext(
             'tiny_c4l/management',
-            get_string('linktomanagername', 'tiny_c4l'),
+            get_string('linktomanagername', 'tiny_c4l', (new moodle_url('/lib/editor/tiny/plugins/c4l/management.php'))->out()),
             get_string('linktomanagerdesc', 'tiny_c4l'),
             ''
         ));

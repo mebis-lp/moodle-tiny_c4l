@@ -86,7 +86,7 @@ $string['inlinetag'] = 'Inline tag';
 $string['js'] = 'JS';
 $string['keyconcept'] = 'Key concept';
 $string['learningoutcomes'] = 'Learning outcomes';
-$string['linktomanagerdesc'] = 'Go to <a href="/lib/editor/tiny/plugins/c4l/management.php">management</a> to change stuff';
+$string['linktomanagerdesc'] = 'Go to <a href="{$a}">management</a> to change stuff';
 $string['linktomanagername'] = 'Link to management';
 $string['manage'] = 'Manage';
 $string['management'] = 'Management';
