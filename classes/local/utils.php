@@ -161,7 +161,8 @@ class utils {
         global $DB;
         $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
         $iconcssentries = [];
-        $componentcssentries = $DB->get_fieldset('tiny_c4l_component', 'css');
+        $componentcssentries = [];
+        $components = $DB->get_records('tiny_c4l_component', null, '', 'id, css, iconurl');
         $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
         $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
         $variantscssentries = $DB->get_fieldset('tiny_c4l_variant', 'css');
@@ -178,6 +179,13 @@ class utils {
                 continue;
             }
             $iconcssentries[] .= self::button_icon_css($componentflavor->componentname, self::replace_pluginfile_urls($componentflavor->iconurl, true), $componentflavor->flavorname);
+        }
+        foreach ($components as $component) {
+            if (empty($component->iconurl)) {
+                continue;
+            }
+            $iconcssentries[] .= self::button_icon_css($component->name, self::replace_pluginfile_urls($component->iconurl, true));
+            $componentcssentries[] = $component->css;
         }
         $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries, $variantscssentries, $iconcssentries);
         $css = array_reduce(

@@ -143,7 +143,7 @@ abstract class base_form extends dynamic_form {
         }
 
         // Purge CSS to show new one.
-        if (($newrecord && !empty($formdata->css)) || ($oldrecord->css != $formdata->css)) {
+        if (($newrecord && !(empty($formdata->css) && empty($formdata->iconurl)) || ($oldrecord->css != $formdata->css) || ($oldrecord->iconurl != $formdata->iconurl))) {
             \tiny_c4l\local\utils::purge_css_cache();
         }
 
