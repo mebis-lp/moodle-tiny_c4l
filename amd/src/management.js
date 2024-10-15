@@ -1,14 +1,14 @@
 import ModalForm from 'core_form/modalform';
-import {get_string as getString} from 'core/str';
-import {exception as displayException, deleteCancelPromise} from 'core/notification';
-import {call as fetchMany} from 'core/ajax';
+import { get_string as getString } from 'core/str';
+import { exception as displayException, deleteCancelPromise } from 'core/notification';
+import { call as fetchMany } from 'core/ajax';
 
-export const init = async() => {
+export const init = async () => {
 
     // Add listener for adding a new source.
     let addsources = document.getElementsByClassName('add');
     addsources.forEach(element => {
-        element.addEventListener('click', async(e) => {
+        element.addEventListener('click', async (e) => {
             showModal(e, element.dataset.id, element.dataset.table);
         });
     });
@@ -16,21 +16,21 @@ export const init = async() => {
     // Add listener to edit sources.
     let editsources = document.getElementsByClassName('edit');
     editsources.forEach(element => {
-        element.addEventListener('click', async(e) => {
+        element.addEventListener('click', async (e) => {
             showModal(e, element.dataset.id, element.dataset.table);
         });
     });
 
     // Add listener to import xml files.
     let importxml = document.getElementById('c4l_import');
-    importxml.addEventListener('click', async(e) => {
+    importxml.addEventListener('click', async (e) => {
         importModal(e);
     });
 
     // Add listener to delete sources.
     let deletesources = document.getElementsByClassName('delete');
     deletesources.forEach(element => {
-        element.addEventListener('click', async(e) => {
+        element.addEventListener('click', async (e) => {
             deleteModal(e, element.dataset.id, element.dataset.title, element.dataset.table);
         });
     });
@@ -38,32 +38,33 @@ export const init = async() => {
     // Add listener to select compcat to show corresponding items.
     let compcats = document.getElementsByClassName('compcat');
     compcats.forEach(element => {
-        element.addEventListener('click', async(e) => {
+        element.addEventListener('click', async (e) => {
             showItems(e, element.dataset.compcat);
         });
     });
 
     // Add listener to manage component flavor relation.
     let compflavor = document.getElementById('c4l_compflavor_button');
-    compflavor.addEventListener('click', async(e) => {
+    compflavor.addEventListener('click', async (e) => {
         compflavorModal(e);
 
-    // Add image and text to item setting click area.
-    let enlargeItems = document.querySelectorAll(
-        '.flavor .card-body > div, .component .card-body > div, .variant .card-body > div'
-    );
-    enlargeItems.forEach(element => {
-        element.addEventListener('click', async(e) => {
-            console.log(e.target.querySelector('a.edit'));
-            let target = e.target.querySelector('a.edit');
-            console.log(target);
-            if (target) {
-                target.querySelector('a.edit').click();
-            } else {
-                target = e.target.closest('.item');
-                console.log(target.querySelector('a.edit'));
-                target.querySelector('a.edit').click();
-            }
+        // Add image and text to item setting click area.
+        let enlargeItems = document.querySelectorAll(
+            '.flavor .card-body > div, .component .card-body > div, .variant .card-body > div'
+        );
+        enlargeItems.forEach(element => {
+            element.addEventListener('click', async (e) => {
+                console.log(e.target.querySelector('a.edit'));
+                let target = e.target.querySelector('a.edit');
+                console.log(target);
+                if (target) {
+                    target.querySelector('a.edit').click();
+                } else {
+                    target = e.target.closest('.item');
+                    console.log(target.querySelector('a.edit'));
+                    target.querySelector('a.edit').click();
+                }
+            });
         });
     });
 };
@@ -89,7 +90,7 @@ function showModal(e, id, table) {
         args: {
             id: id,
         },
-        modalConfig: {title: title},
+        modalConfig: { title: title },
     });
     // Reload page after submit.
     modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => location.reload());
@@ -110,7 +111,7 @@ function importModal(e) {
         // Load import form.
         formClass: "tiny_c4l\\form\\management_import_form",
         args: {},
-        modalConfig: {title: title},
+        modalConfig: { title: title },
     });
     // Reload page after submit.
     modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => location.reload());
@@ -130,7 +131,7 @@ function compflavorModal(e) {
         // Load import form.
         formClass: "tiny_c4l\\form\\management_comp_flavor_form",
         args: {},
-        modalConfig: {title: title},
+        modalConfig: { title: title },
     });
     // Reload page after submit.
     modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => location.reload());
@@ -151,7 +152,7 @@ function deleteModal(e, id, title, table) {
     deleteCancelPromise(
         getString('delete', 'tiny_c4l', title),
         getString('deletewarning', 'tiny_c4l'),
-    ).then(async() => {
+    ).then(async () => {
         if (id !== 0) {
             try {
                 const deleted = await deleteItem(id, table);
@@ -183,11 +184,12 @@ export const deleteItem = (
     table,
 ) => fetchMany(
     [{
-    methodname: 'tiny_c4l_delete_item',
-    args: {
-        id,
-        table,
-}}])[0];
+        methodname: 'tiny_c4l_delete_item',
+        args: {
+            id,
+            table,
+        }
+    }])[0];
 
 /**
  * Show items after clicking a compcat.

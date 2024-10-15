@@ -39,32 +39,26 @@ class management_comp_flavor_form extends dynamic_form {
 
         $group = [];
         $group[] = $mform->createElement('hidden', 'id');
-        $group[] = $mform->createElement('text', 'componentname', get_string('component', 'tiny_c4l'));
-        $group[] = $mform->createElement('text', 'flavorname', get_string('flavor', 'tiny_c4l'));
-        $group[] = $mform->createElement('url', 'iconurl', get_string('iconurl', 'tiny_c4l'));
+        $group[] = $mform->createElement('static', 'name', get_string('component_flavor', 'tiny_c4l'));
+        $group[] = $mform->createElement('text', 'iconurl', get_string('iconurl', 'tiny_c4l'));
 
         $options = [
             'id' => [
                 'type' => PARAM_INT,
             ],
-            'componentname' => [
+            'name' => [
                 'type' => PARAM_TEXT,
-                'disabledif' => [
-                    'id', 'neq', 0
-                ],
-            ],
-            'flavorname' => [
-                'type' => PARAM_TEXT,
-                'disabledif' => [
-                    'id', 'neq', 0
-                ],
             ],
             'iconurl' => [
                 'type' => PARAM_URL,
             ],
         ];
 
-        $this->repeat_elements($group, $count, $options, 'itemcount', null, 0);
+        $this->repeat_elements($group, $count, $options, 'itemcount', 'adddummy', 0);
+
+        $mform->removeElement('adddummy');
+
+        $mform->setAttributes(['data-formtype' => 'tiny_c4l_comp_flavor']);
     }
 
     /**
@@ -119,8 +113,7 @@ class management_comp_flavor_form extends dynamic_form {
         $data = [];
         foreach($compflavor as $item) {
             $data['id'][] = $item->id;
-            $data['componentname'][] = $item->componentname;
-            $data['flavorname'][] = $item->flavorname;
+            $data['name'][] = $item->componentname . '/' . $item->flavorname;
             $data['iconurl'][] = utils::replace_pluginfile_urls($item->iconurl, true);
         }
 
