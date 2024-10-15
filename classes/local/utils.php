@@ -162,7 +162,7 @@ class utils {
         $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
         $iconcssentries = [];
         $componentcssentries = [];
-        $components = $DB->get_records('tiny_c4l_component', null, '', 'id, css, iconurl');
+        $components = $DB->get_records('tiny_c4l_component', null, '', 'id, name, css, iconurl');
         $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
         $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
         $variantscssentries = $DB->get_fieldset('tiny_c4l_variant', 'css');
