@@ -36,6 +36,10 @@
 .compcat:hover .card {
     border: 1px solid #787878;
 }
+.compcat.active .card {
+    border: 1px solid #0b5190;
+}
+
 
 .card-body > div:hover  {
     cursor: pointer;

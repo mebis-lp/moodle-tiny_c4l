@@ -4,7 +4,9 @@ import { exception as displayException, deleteCancelPromise } from 'core/notific
 import { call as fetchMany } from 'core/ajax';
 import LocalStorage from 'core/localstorage';
 
-export const init = async () => {
+const storageKey = ('currentC4lcompcat');
+
+export const init = async() => {
 
     // Add listener for adding a new source.
     let addsources = document.getElementsByClassName('add');
@@ -60,6 +62,17 @@ export const init = async () => {
             item.querySelector('a.edit').click();
         });
     });
+
+    // Check for active compcat.
+    let activeCompcat = LocalStorage.get(storageKey);
+    if (activeCompcat) {
+        let compcat = document.querySelector('.compcat[data-compcat="' + activeCompcat + '"]');
+        if (compcat) {
+            // Show items and set active.
+            showItems(false, activeCompcat);
+            compcat.classList.add('active');
+        }
+    }
 };
 
 /**
@@ -224,4 +237,15 @@ function showItems(e, compcat) {
     addsShow.forEach(element => {
         element.classList.remove('hidden');
     });
+
+    // Unmark all and mark clicked compcat, and save in local storage.
+    if (e) {
+        let items = document.getElementsByClassName('compcat');
+        items.forEach(element => {
+            element.classList.remove('active');
+        });
+        let item = e.target.closest('.compcat');
+        item.classList.add('active');
+        LocalStorage.set(storageKey, item.dataset.compcat);
+    }
 }
