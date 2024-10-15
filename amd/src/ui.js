@@ -412,7 +412,8 @@ const getFilters = async() => {
     const filters = [];
     //const stringValues = await getStrings(Contexts.map((key) => ({key, component})));
     // Iterate over contexts.
-    categories.forEach((category) => {
+    let sortedCategories = categories.sort((a, b) => a.displayorder - b.displayorder);
+    sortedCategories.forEach((category) => {
         filters.push({
             name: category.displayname,
             type: category.id,
@@ -448,8 +449,8 @@ const getComponentVariants = (component, variants) => {
 const getButtons = async(editor) => {
     const buttons = [];
     const sel = editor.selection.getContent();
-
-    Object.values(components).forEach(component => {
+    let sortedComponents = components.sort((a, b) => a.displayorder - b.displayorder);
+    Object.values(sortedComponents).forEach(component => {
         buttons.push({
             id: component.id, // TODO do dynamically, maybe we do not need an id
             name: component.displayname,
@@ -484,7 +485,7 @@ const getC4LData = async() => {
 
     const indexedCategories = [];
     data.categories.forEach(category => {
-        indexedCategories[category.id] = category
+        indexedCategories[category.id] = category;
     });
 
     return {
