@@ -12,10 +12,13 @@
     height: 5rem;
     & > div {
         width: 45%;
+        .c4l-button-text {
+            height: 100%;
+        }
         .c4l-button-text::before {
             display: flex;
             width: unset;
-            height: unset;
+            height: 100%;
         }
     }
     & > div.more {
