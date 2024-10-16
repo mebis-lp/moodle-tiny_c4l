@@ -48,10 +48,10 @@ import {call as fetchMany} from 'core/ajax';
 let userStudent = false;
 let previewC4L = true;
 let allowedComponents = [];
-let components = null;
-let categories = null;
-let flavors = null;
-let variants = null;
+let components = [];
+let categories = [];
+let flavors = [];
+let variants = [];
 let langStrings = {};
 
 let currentFlavor = '';
@@ -412,14 +412,15 @@ const getFilters = async() => {
     const filters = [];
     //const stringValues = await getStrings(Contexts.map((key) => ({key, component})));
     // Iterate over contexts.
-    let sortedCategories = categories.sort((a, b) => a.displayorder - b.displayorder);
-    sortedCategories.forEach((category) => {
+    categories.forEach((category) => {
         filters.push({
             name: category.displayname,
             type: category.id,
             filterClass: category.order === 1 ? 'c4l-button-filter-enabled' : '',
+            displayorder: category.displayorder,
         });
     });
+    filters.sort((a, b) => a.displayorder - b.displayorder);
 
     return filters;
 };
@@ -449,8 +450,7 @@ const getComponentVariants = (component, variants) => {
 const getButtons = async(editor) => {
     const buttons = [];
     const sel = editor.selection.getContent();
-    let sortedComponents = components.sort((a, b) => a.displayorder - b.displayorder);
-    Object.values(sortedComponents).forEach(component => {
+    Object.values(components).forEach(component => {
         buttons.push({
             id: component.id, // TODO do dynamically, maybe we do not need an id
             name: component.displayname,
@@ -462,6 +462,7 @@ const getButtons = async(editor) => {
             category: component.compcat,
         });
     });
+    buttons.sort((a, b) => a.displayorder - b.displayorder);
 
     return buttons;
 };
