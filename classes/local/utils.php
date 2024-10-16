@@ -181,11 +181,11 @@ class utils {
             $iconcssentries[] .= self::button_icon_css($componentflavor->componentname, self::replace_pluginfile_urls($componentflavor->iconurl, true), $componentflavor->flavorname);
         }
         foreach ($components as $component) {
+            $componentcssentries[] = $component->css;
             if (empty($component->iconurl)) {
                 continue;
             }
             $iconcssentries[] .= self::button_icon_css($component->name, self::replace_pluginfile_urls($component->iconurl, true));
-            $componentcssentries[] = $component->css;
         }
         $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries, $variantscssentries, $iconcssentries);
         $css = array_reduce(
