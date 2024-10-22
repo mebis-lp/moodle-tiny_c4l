@@ -35,19 +35,32 @@ import {
     addVariant,
     getVariantsClass,
     getVariantHtml,
+    getVariantPreferences,
     getVariantsHtml,
     loadVariantPreferences,
     removeVariant,
-    saveVariantPreferences,
+    setFlavors,
     setVariants,
     variantExists,
     setComponents
 } from './variantslib';
+import {
+    findByName
+} from './helper';
+import {
+    savePreferences,
+    loadPreferences,
+    Preferences
+} from './preferencelib';
 import {call as fetchMany} from 'core/ajax';
 
+// Will be reimplemented in the future.
+// eslint-disable-next-line no-unused-vars
 let userStudent = false;
-let previewC4L = true;
+// eslint-disable-next-line no-unused-vars
 let allowedComponents = [];
+
+let previewC4L = true;
 let components = [];
 let categories = [];
 let flavors = [];
@@ -55,6 +68,7 @@ let variants = [];
 let langStrings = {};
 
 let currentFlavor = '';
+let currentFlavorId = 0;
 let currentCategoryId = 1;
 let lastFlavor = [];
 
@@ -69,14 +83,24 @@ export const handleAction = async(editor) => {
     categories = data.categories;
     flavors = data.flavors;
     variants = data.variants;
-
     setComponents(components);
     setVariants(variants);
+    setFlavors(flavors);
     userStudent = isStudent(editor);
     previewC4L = showPreview(editor);
     langStrings = await getAllStrings();
     allowedComponents = getallowedComponents(editor);
-    loadVariantPreferences().then(() => displayDialogue(editor));
+    currentCategoryId = await loadPreferences(Preferences.category);
+    lastFlavor = await loadPreferences(Preferences.category_flavors);
+    if (lastFlavor === null) {
+        lastFlavor = [];
+    }
+    let component_variants = await loadPreferences(Preferences.component_variants);
+    if (component_variants === null) {
+        component_variants = {};
+    }
+    loadVariantPreferences(component_variants);
+    displayDialogue(editor);
 };
 
 /**
@@ -143,21 +167,21 @@ const displayDialogue = async(editor) => {
         node.addEventListener('click', (event) => {
             handleVariantClick(event, modal);
         });
-        // if (previewC4L) {
-        //     node.addEventListener('mouseenter', (event) => {
-        //         handleVariantMouseEvent(event, modal, true);
-        //     });
-        //     node.addEventListener('mouseleave', (event) => {
-        //         handleVariantMouseEvent(event, modal, false);
-        //     });
-        // }
     });
 
     if (filters.length > 0) {
+        let savedCategory = currentCategoryId;
         filters[0].click();
+        if (savedCategory != 0) {
+            filters.forEach((filter) => {
+                if (filter.dataset.filter == savedCategory) {
+                    filter.click();
+                }
+            });
+        }
     }
 
-    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : '');
+    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : 0);
 };
 
 /**
@@ -179,11 +203,11 @@ const handleButtonFilterClick = (event, modal) => {
     // Show/hide component buttons.
     showCategoryButtons(modal, currentCategoryId);
 
-    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : '');
+    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : 0);
 };
 
-const clickFlavor = (modal, flavor = '') => {
-    if (flavor == '') {
+const clickFlavor = (modal, flavor = 0) => {
+    if (flavor == 0) {
         let availableFlavors = modal.getRoot()[0].querySelectorAll('.c4l-button-flavor:not(.c4l-hidden)');
         if (availableFlavors.length > 0) {
             availableFlavors[0].click();
@@ -201,7 +225,7 @@ const clickFlavor = (modal, flavor = '') => {
 
     let flavorButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-flavors button');
     flavorButtons.forEach(node => {
-        if (node.dataset.flavor == flavor) {
+        if (node.dataset.id == flavor) {
             node.click();
         }
     });
@@ -223,12 +247,14 @@ const showFlavors = (modal, categoryId) => {
 const handleButtonFlavorClick = (event, modal) => {
     const button = event.target.closest('button');
     currentFlavor = button.dataset.flavor;
-    lastFlavor[currentCategoryId] = currentFlavor;
+    currentFlavorId = button.dataset.id;
+    lastFlavor[currentCategoryId] = currentFlavorId;
 
     const buttons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-flavors button');
     buttons.forEach(node => node.classList.remove('c4l-button-flavor-enabled'));
     button.classList.add('c4l-button-flavor-enabled');
     const componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button');
+
     componentButtons.forEach(componentButton => {
         // Remove previous flavor.
         if (componentButton.dataset.flavor != undefined) {
@@ -241,10 +267,22 @@ const handleButtonFlavorClick = (event, modal) => {
             componentButton.dataset.category == currentCategoryId
         ) {
             componentButton.classList.remove('c4l-hidden');
+            if (componentButton.dataset.flavorlist != '') {
+                let variants = getVariantsClass(components[componentButton.dataset.id].name, currentFlavor);
+                let availableVariants = componentButton.querySelectorAll('.c4l-button-variant');
+                availableVariants.forEach((variant) => {
+                    if (variants.indexOf(variant.dataset.variant) != -1) {
+                        updateVariantButtonState(variant, true);
+                    } else {
+                        updateVariantButtonState(variant, false);
+                    }
+                });
+            }
         } else {
             componentButton.classList.add('c4l-hidden');
         }
     });
+
 };
 
 /**
@@ -254,14 +292,18 @@ const handleButtonFlavorClick = (event, modal) => {
  */
 const handleModalHidden = (editor) => {
     editor.targetElm.closest('body').classList.remove('c4l-modal-no-preview');
-    saveVariantPreferences(components);
+    savePreferences([
+        {type: Preferences.category, value: currentCategoryId},
+        {type: Preferences.category_flavors, value: JSON.stringify(lastFlavor)},
+        {type: Preferences.component_variants, value: JSON.stringify(getVariantPreferences())}
+    ]);
 };
 
-const updateComponentCode = (componentCode, selectedButton, placeholder) => {
+const updateComponentCode = (componentCode, selectedButton, placeholder, flavor = '') => {
     componentCode = componentCode.replace('{{PLACEHOLDER}}', placeholder);
 
     // Return active variants for current component.
-    const variants = getVariantsClass(components[selectedButton].name);
+    const variants = getVariantsClass(components[selectedButton].name, flavor);
 
     // Apply variants to html component.
     if (variants.length > 0) {
@@ -306,12 +348,14 @@ const handleButtonClick = async (event, editor, modal) => {
         let componentCode = components[selectedButton].code;
         const placeholder = (sel.length > 0 ? sel : components[selectedButton].text);
 
+        let flavor = components[selectedButton].flavors.length > 0 ? currentFlavor : '';
+
         // Create a new node to replace the placeholder.
         const randomId = generateRandomID();
         const newNode = document.createElement('span');
         newNode.dataset.id = randomId;
         newNode.innerHTML = placeholder;
-        componentCode = updateComponentCode(componentCode, selectedButton, newNode.outerHTML);
+        componentCode = updateComponentCode(componentCode, selectedButton, newNode.outerHTML, flavor);
         // Sets new content.
         editor.selection.setContent(componentCode);
 
@@ -337,8 +381,9 @@ const handleButtonMouseEvent = (event, modal, show) => {
     const selectedButton = event.target.closest('button').dataset.id;
     const node = modal.getRoot()[0].querySelector('div[data-id="code-preview-' + selectedButton + '"]');
     const previewDefault = modal.getRoot()[0].querySelector('div[data-id="code-preview-default"]');
+    let flavor = components[selectedButton].flavors.length > 0 ? currentFlavor : '';
 
-    node.innerHTML = updateComponentCode(components[selectedButton].code, selectedButton, 'Lorem ipsum');
+    node.innerHTML = updateComponentCode(components[selectedButton].code, selectedButton, components[selectedButton].text, flavor);
 
     if (node) {
         if (show) {
@@ -353,11 +398,13 @@ const handleButtonMouseEvent = (event, modal, show) => {
 
 /**
  * Handle a mouse events mouseenter/mouseleave in a variant button.
+ * Not used at the moment.
  *
  * @param {MouseEvent} event The mouseenter/mouseleave event
  * @param {obj} modal
  * @param {bool} show
  */
+// eslint-disable-next-line no-unused-vars
 const handleVariantMouseEvent = (event, modal, show) => {
     const variant = event.target.closest('span');
     const variantEnabled = variant.dataset.state == 'on';
@@ -379,11 +426,17 @@ const handleVariantClick = (event, modal) => {
     event.stopPropagation();
     const variant = event.target.closest('span');
     const button = event.target.closest('button');
+    const flavor = components[button.dataset.id].flavors.length > 0 ? currentFlavor : '';
 
     updateVariantComponentState(variant, button, modal, false, true);
 
     const node = modal.getRoot()[0].querySelector('div[data-id="code-preview-' + button.dataset.id + '"]');
-    node.innerHTML = updateComponentCode(components[button.dataset.id].code, button.dataset.id, 'Lorem ipsum');
+    node.innerHTML = updateComponentCode(
+        components[button.dataset.id].code,
+        button.dataset.id,
+        components[button.dataset.id].text,
+        flavor
+    );
 };
 
 /**
@@ -414,6 +467,7 @@ const getFilters = async() => {
     // Iterate over contexts.
     categories.forEach((category) => {
         filters.push({
+            id: category.id,
             name: category.displayname,
             type: category.id,
             filterClass: category.order === 1 ? 'c4l-button-filter-enabled' : '',
@@ -425,16 +479,19 @@ const getFilters = async() => {
     return filters;
 };
 
-const getComponentVariants = (component, variants) => {
+const getComponentVariants = (component) => {
     const componentVariants = [];
     component.variants.forEach(variant => {
-        if (variants[variant] !== undefined) {
+        let variantitem = findByName(variants, variant);
+        if (variantitem !== undefined) {
+            let state = variantExists(component.name, variantitem.name) ? 'on' : 'off';
             componentVariants.push({
-                name: variant,
-                state: 'off',
-                imageClass: variant + '-variant-off',
-                title: langStrings.get(variant),
-                content: variants[variant].content,
+                id: variantitem.id,
+                name: variantitem.name,
+                state: state,
+                imageClass: variantitem.name + '-variant-' + state,
+                title: langStrings.get(variantitem.name),
+                content: variantitem.content,
             });
         }
     });
@@ -449,10 +506,12 @@ const getComponentVariants = (component, variants) => {
  */
 const getButtons = async(editor) => {
     const buttons = [];
+    // Not used at the moment.
+    // eslint-disable-next-line no-unused-vars
     const sel = editor.selection.getContent();
     Object.values(components).forEach(component => {
         buttons.push({
-            id: component.id, // TODO do dynamically, maybe we do not need an id
+            id: component.id,
             name: component.displayname,
             type: component.compcat,
             imageClass: 'c4l-' + component.name + '-icon',
@@ -481,7 +540,7 @@ const getC4LData = async() => {
 
     const indexedVariants = [];
     data.variants.forEach(variant => {
-        indexedVariants[variant.name] = variant;
+        indexedVariants[variant.id] = variant;
     });
 
     const indexedCategories = [];
@@ -499,11 +558,13 @@ const getC4LData = async() => {
 
 /**
  * Get variants for the dialogue.
+ * Not used at the moment.
  *
  * @param  {string} component
  * @param  {object} elements
  * @return {object} Variants for a component
  */
+// eslint-disable-next-line no-unused-vars
 const getVariantsState = (component, elements) => {
     const variants = [];
     let variantState = '';
@@ -553,15 +614,16 @@ const updateVariantComponentState = (variant, button, modal, show, updateHtml) =
     const variantPreview = modal.getRoot()[0]
         .querySelector('span[data-id="variantHTML-' + selectedButton + '"]');
     let variantsHtml = '';
+    let hasflavors = components[selectedButton].flavors.length > 0;
 
     if (previewComponent) {
         if (updateHtml) {
             if (variant.dataset.state == 'on') {
-                removeVariant(components[selectedButton].name, variant.dataset.variant);
+                removeVariant(components[selectedButton].name, variant.dataset.variant, hasflavors ? currentFlavor : '');
                 updateVariantButtonState(variant, false);
                 previewComponent.classList.remove(selectedVariant);
             } else {
-                addVariant(components[selectedButton].name, variant.dataset.variant);
+                addVariant(components[selectedButton].name, variant.dataset.variant, hasflavors ? currentFlavor : '');
                 updateVariantButtonState(variant, true);
                 previewComponent.classList.add(selectedVariant);
             }
@@ -587,10 +649,10 @@ const updateVariantComponentState = (variant, button, modal, show, updateHtml) =
     } else {
         // Update variants preferences.
         if (variant.dataset.state == 'on') {
-            removeVariant(components[selectedButton].name, variant.dataset.variant);
+            removeVariant(components[selectedButton].name, variant.dataset.variant, hasflavors ? currentFlavor : '');
             updateVariantButtonState(variant, false);
         } else {
-            addVariant(components[selectedButton].name, variant.dataset.variant);
+            addVariant(components[selectedButton].name, variant.dataset.variant, hasflavors ? currentFlavor : '');
             updateVariantButtonState(variant, true);
         }
     }
