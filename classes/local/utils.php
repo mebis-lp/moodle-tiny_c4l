@@ -72,7 +72,7 @@ class utils {
         foreach ($variants as $variant) {
             $variant->content = self::replace_pluginfile_urls($variant->content, true);
         }
-        return array_values($variants);
+        return $variants;
     }
 
     /**

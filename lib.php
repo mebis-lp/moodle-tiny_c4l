@@ -34,10 +34,20 @@ defined('MOODLE_INTERNAL') || die();
 function tiny_c4l_user_preferences() {
     $preferences = [];
 
-    $preferences['c4l_components_variants'] = [
-            'type' => PARAM_RAW,
-            'null' => NULL_NOT_ALLOWED,
-            'default' => '',
+    $preferences['c4l_category'] = [
+        'type' => PARAM_INT,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => 0,
+    ];
+
+    $preferences['c4l_category_flavors'] = [
+        'type' => PARAM_RAW,
+        'null' => NULL_ALLOWED,
+    ];
+
+    $preferences['c4l_component_variants'] = [
+        'type' => PARAM_RAW,
+        'null' => NULL_ALLOWED,
     ];
 
     return $preferences;

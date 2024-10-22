@@ -41,6 +41,7 @@ $string['code'] = 'Code';
 $string['code_help'] = 'HTML code to insert. You can use {{VARIANTS}}, {{FLAVOR}} and {{PLACEHOLDER}} as placeholders for variants, flavors and text to be inserted.';
 $string['comfort-reading'] = 'Comfort reading';
 $string['compcat'] = 'Compcat';
+$string['compflavor_icons'] = 'Change button icons for components depending on flavors';
 $string['componentname'] = 'Component name';
 $string['componentname_help'] = 'Name of the component use for internal use (also as a class name in CSS)';
 $string['content'] = 'Content';

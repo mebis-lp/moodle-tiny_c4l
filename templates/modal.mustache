@@ -59,14 +59,14 @@
             </div>
             <div class="c4l-buttons-filters">
                 {{#filters}}
-                    <button class="c4l-button-filter {{filterClass}}" data-filter="{{type}}" aria-controls="c4l-buttons-grid">
+                    <button class="c4l-button-filter {{filterClass}}" data-id="{{id}}" data-filter="{{type}}" aria-controls="c4l-buttons-grid">
                             {{name}}
                     </button>
                 {{/filters}}
             </div>
             <div class="c4l-buttons-flavors">
                 {{#flavors}}
-                    <button class="c4l-button-flavor {{flavorClass}}" data-flavor="{{name}}" aria-controls="c4l-buttons-grid" data-categories="{{categories}}">
+                    <button class="c4l-button-flavor {{flavorClass}}" data-id="{{id}}" data-flavor="{{name}}" aria-controls="c4l-buttons-grid" data-categories="{{categories}}">
                         {{displayname}}
                     </button>
                 {{/flavors}}
@@ -86,7 +86,8 @@
                             <span class="c4l-button-variants">
                             {{#variants}}
                                 <span
-                                    class="c4l-button-variant {{imageClass}}"
+                                    class="c4l-button-variant {{imageClass}} {{state}}"
+                                    data-id="{{id}}"
                                     data-variant="{{name}}"
                                     data-state="{{state}}"
                                     data-toggle="tooltip"
