@@ -60,7 +60,6 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_conf
      * @param array $options
      * @param array $fpoptions
      * @param \editor_tiny\editor|null $editor
-     * @return void
      *
      * @return array
      */
@@ -94,5 +93,24 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_conf
             'viewc4l' => $viewc4l,
             'cssurl' => $cssurl,
         ];
+    }
+
+    /**
+     * Check if the plugin is enabled for the context
+     *
+     * @param context $context
+     * @param array $options
+     * @param array $fpoptions
+     * @param \editor_tiny\editor|null $editor
+     *
+     * @return bool
+     */
+    public static function is_enabled(
+        context $context,
+        array $options,
+        array $fpoptions,
+        ?\editor_tiny\editor $editor = null
+    ): bool {
+        return has_capability('tiny/c4l:viewplugin', $context);
     }
 }
