@@ -52,6 +52,7 @@ import {
     Preferences
 } from './preferencelib';
 import {call as fetchMany} from 'core/ajax';
+import {getContextId} from 'editor_tiny/options';
 
 let userStudent = false;
 
@@ -74,6 +75,7 @@ let lastFlavor = [];
  * @param {TinyMCE} editor
  */
 export const handleAction = async(editor) => {
+    contextid = getContextId(editor);
     userStudent = isStudent(editor);
     let data = await getC4LData();
     components = data.components;
