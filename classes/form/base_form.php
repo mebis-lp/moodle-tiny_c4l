@@ -216,6 +216,8 @@ abstract class base_form extends dynamic_form {
             if (isset($source->name)) {
                 $flavors = $DB->get_fieldset_select('tiny_c4l_comp_flavor', 'flavorname', 'componentname = ?', ['componentname' => $source->name]);
                 $source->flavors = $flavors;;
+                $variants = $DB->get_fieldset_select('tiny_c4l_comp_variant', 'variant', 'component = ?', ['component' => $source->id]);
+                $source->variants = $variants;
             }
         }
 
