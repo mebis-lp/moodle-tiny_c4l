@@ -441,7 +441,7 @@ const getCategories = async() => {
     const cats = [];
     //const stringValues = await getStrings(Contexts.map((key) => ({key, component})));
     // Iterate over contexts.
-     categories.forEach((category) => {
+    categories.forEach((category) => {
         let categoryFlavors = getCategoryFlavors(category.id);
         let hasFlavors = hasCategoryFlavors(categoryFlavors);
          cats.push({
@@ -455,10 +455,12 @@ const getCategories = async() => {
         });
     });
     // Sort by displayorder and set first to active.
-     cats.sort((a, b) => a.displayorder - b.displayorder);
-     cats[0].active = 'active';
-    if (cats[0].flavors.length > 0) {
-         cats[0].flavors[0].factive = 'active';
+    cats.sort((a, b) => a.displayorder - b.displayorder);
+    if (cats.length > 0) {
+        cats[0].active = 'active';
+        if (cats[0].flavors.length > 0) {
+            cats[0].flavors[0].factive = 'active';
+        }
     }
 
     return cats;
