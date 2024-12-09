@@ -197,6 +197,9 @@ class manager {
             return false;
         }
 
+        // Create mapping array for tiny_c4l_compcat table.
+        $categorymap = [];
+
         // Create mapping array for tiny_c4l_component table.
         $componentmap = [];
 
@@ -222,23 +225,23 @@ class manager {
         // First process all component categories. We need the category ids for the components.
         foreach ($data['tiny_c4l_compcat'] as $compcat) {
             // Save new id for mapping.
-            $componentmap[$compcat->id] = self::import_category($compcat);
+            $categorymap[$compcat->id] = self::import_category($compcat);
         }
 
         foreach ($data['tiny_c4l_component'] as $component) {
-            self::import_component($component, $componentmap);
+            $componentmap[$component->id] = self::import_component($component, $categorymap);
         }
 
         foreach ($data['tiny_c4l_flavor'] as $flavor) {
-            self::import_flavor($flavor, $componentmap);
+            self::import_flavor($flavor, $categorymap);
         }
 
         foreach ($data['tiny_c4l_variant'] as $variant) {
-            self::import_variant($variant, $componentmap);
+            self::import_variant($variant, $categorymap);
         }
 
         foreach ($data['tiny_c4l_comp_flavor'] as $componentflavor) {
-            self::import_component_flavor($componentflavor, $componentmap);
+            self::import_component_flavor($componentflavor, $categorymap);
         }
 
         foreach ($data['tiny_c4l_comp_variant'] as $componentvariant) {
@@ -277,20 +280,20 @@ class manager {
      * Import a component.
      *
      * @param array|object $record
-     * @param array $componentmap
+     * @param array $categorymap
      * @return int id of the imported component
      */
-    public static function import_component(array|object $record, array $componentmap): int {
+    public static function import_component(array|object $record, array $categorymap): int {
         global $DB;
         $record = (array) $record;
-        if (isset($componentmap[$record['compcat']])) {
-            $record['compcat'] = $componentmap[$record['compcat']];
+        if (isset($categorymap[$record['compcat']])) {
+            $record['compcat'] = $categorymap[$record['compcat']];
         }
         
-        $record['css'] = self::update_pluginfile_tags_bulk($componentmap, $record['css'] ?? '');
-        $record['code'] = self::update_pluginfile_tags_bulk($componentmap, $record['code'] ?? '');
-        $record['js'] = self::update_pluginfile_tags_bulk($componentmap, $record['js'] ?? '');
-        $record['iconurl'] = self::update_pluginfile_tags_bulk($componentmap, $record['iconurl'] ?? '');
+        $record['css'] = self::update_pluginfile_tags_bulk($categorymap, $record['css'] ?? '');
+        $record['code'] = self::update_pluginfile_tags_bulk($categorymap, $record['code'] ?? '');
+        $record['js'] = self::update_pluginfile_tags_bulk($categorymap, $record['js'] ?? '');
+        $record['iconurl'] = self::update_pluginfile_tags_bulk($categorymap, $record['iconurl'] ?? '');
     
         $current = $DB->get_record('tiny_c4l_component', ['name' => $record['name']]);
         if ($current) {
@@ -337,16 +340,16 @@ class manager {
      * Import a flavor.
      *
      * @param array|object $record
-     * @param array $componentmap
+     * @param array $categorymap
      * @return int id of the imported flavor
      */
-    public static function import_flavor(array|object $record, array $componentmap): int {
+    public static function import_flavor(array|object $record, array $categorymap): int {
         global $DB;
         $record = (array) $record;
         $current = $DB->get_record('tiny_c4l_flavor', ['name' => $record['name']]);
         
-        $record['css'] = self::update_pluginfile_tags_bulk($componentmap, $record['css'], 'import');
-        $record['content'] = self::update_pluginfile_tags_bulk($componentmap, $record['content'], 'import');
+        $record['css'] = self::update_pluginfile_tags_bulk($categorymap, $record['css'], 'import');
+        $record['content'] = self::update_pluginfile_tags_bulk($categorymap, $record['content'], 'import');
         
         if ($current) {
             $record['id'] = $current->id;
@@ -361,17 +364,17 @@ class manager {
      * Import a variant.
      *
      * @param array|object $record
-     * @param array $componentmap
+     * @param array $categorymap
      * @return int id of the imported variant
      */
-    public static function import_variant(array|object $record, array $componentmap): int {
+    public static function import_variant(array|object $record, array $categorymap): int {
         global $DB;
         $record = (array) $record;
         $current = $DB->get_record('tiny_c4l_variant', ['name' => $record['name']]);
         
-        $record['css'] = self::update_pluginfile_tags_bulk($componentmap, $record['css'] ?? '');
-        $record['content'] = self::update_pluginfile_tags_bulk($componentmap, $record['content'] ?? '');
-        $record['iconurl'] = self::update_pluginfile_tags_bulk($componentmap, $record['iconurl'] ?? '');
+        $record['css'] = self::update_pluginfile_tags_bulk($categorymap, $record['css'] ?? '');
+        $record['content'] = self::update_pluginfile_tags_bulk($categorymap, $record['content'] ?? '');
+        $record['iconurl'] = self::update_pluginfile_tags_bulk($categorymap, $record['iconurl'] ?? '');
 
         if ($current) {
             $record['id'] = $current->id;
@@ -386,15 +389,15 @@ class manager {
      * Import a relation between component and flavor.
      *
      * @param array|object $record
-     * @param array $componentmap
+     * @param array $categorymap
      * @return int id of the imported relation
      */
-    public static function import_component_flavor(array|object $record, array $componentmap): int {
+    public static function import_component_flavor(array|object $record, array $categorymap): int {
         global $DB;
         $record = (array) $record;
         $current = $DB->get_record('tiny_c4l_comp_flavor', ['componentname' => $record['componentname'], 'flavorname' => $record['flavorname']]);
         
-        $record['iconurl'] = self::update_pluginfile_tags_bulk($componentmap, $record['iconurl'] ?? '');
+        $record['iconurl'] = self::update_pluginfile_tags_bulk($categorymap, $record['iconurl'] ?? '');
 
         if ($current) {
             $record['id'] = $current->id;
@@ -415,6 +418,9 @@ class manager {
     public static function import_component_variant(array|object $record, array $componentmap): int {
         global $DB;
         $record = (array) $record;
+        if (isset($componentmap[$record['component']])) {
+            $record['component'] = $componentmap[$record['component']];
+        }
         $current = $DB->get_record('tiny_c4l_comp_variant', ['component' => $record['component'], 'variant' => $record['variant']]);
         if (!$current) {
             $record['id'] = $DB->insert_record('tiny_c4l_comp_variant', $record);
@@ -426,12 +432,12 @@ class manager {
     /**
      * Update the pluginfile tags in the given subject.
      *
-     * @param array $componentmap
+     * @param array $categorymap
      * @param string $subject
      * @return string
      */
-    public static function update_pluginfile_tags_bulk(array $componentmap, string $subject): string {
-        foreach ($componentmap as $oldid => $newid) {
+    public static function update_pluginfile_tags_bulk(array $categorymap, string $subject): string {
+        foreach ($categorymap as $oldid => $newid) {
             $subject = self::update_pluginfile_tags($oldid, $newid, $subject, 'bulk');
         }
         $subject = self::remove_mark($subject, 'bulk');

@@ -74,6 +74,9 @@ class management_import_form extends base_form {
             $fp = get_file_packer('application/zip');
             $fp->extract_to_storage($file, SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/');
             $xmlfile = $fs->get_file(SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/', 'tiny_c4l_export.xml');
+            if (!$xmlfile) {
+                throw new \moodle_exception('errorbackupfile', 'tiny_c4l');
+            }
             $xmlcontent = $xmlfile->get_content();
         } else {
             $xmlcontent = $file->get_content();
