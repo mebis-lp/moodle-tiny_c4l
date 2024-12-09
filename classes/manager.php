@@ -286,12 +286,12 @@ class manager {
         if (isset($componentmap[$record['compcat']])) {
             $record['compcat'] = $componentmap[$record['compcat']];
         }
-        foreach ($componentmap as $oldid => $newid) {
-            $record['css'] = self::update_pluginfile_tags($oldid, $newid, $record['css'] ?? '');
-            $record['code'] = self::update_pluginfile_tags($oldid, $newid, $record['code'] ?? '');
-            $record['js'] = self::update_pluginfile_tags($oldid, $newid, $record['js'] ?? '');
-            $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl'] ?? '');
-        }
+        
+        $record['css'] = self::update_pluginfile_tags_bulk($componentmap, $record['css'] ?? '');
+        $record['code'] = self::update_pluginfile_tags_bulk($componentmap, $record['code'] ?? '');
+        $record['js'] = self::update_pluginfile_tags_bulk($componentmap, $record['js'] ?? '');
+        $record['iconurl'] = self::update_pluginfile_tags_bulk($componentmap, $record['iconurl'] ?? '');
+    
         $current = $DB->get_record('tiny_c4l_component', ['name' => $record['name']]);
         if ($current) {
             $record['id'] = $current->id;
@@ -304,7 +304,7 @@ class manager {
             }
         }
 
-        if ($record['flavors'] != '') {
+        if (!empty($record['flavors'])) {
             foreach (explode(',', $record['flavors']) as $flavor) {
                 if ($flavor == '') {
                     continue;
@@ -317,7 +317,7 @@ class manager {
             }
         }
 
-        if ($record['variants'] != '') {
+        if (!empty($record['variants'])) {
             foreach (explode(',', $record['variants']) as $variant) {
                 if ($variant == '') {
                     continue;
@@ -344,10 +344,10 @@ class manager {
         global $DB;
         $record = (array) $record;
         $current = $DB->get_record('tiny_c4l_flavor', ['name' => $record['name']]);
-        foreach ($componentmap as $oldid => $newid) {
-            $record['css'] = self::update_pluginfile_tags($oldid, $newid, $record['css']);
-            $record['content'] = self::update_pluginfile_tags($oldid, $newid, $record['content']);
-        }
+        
+        $record['css'] = self::update_pluginfile_tags_bulk($componentmap, $record['css'], 'import');
+        $record['content'] = self::update_pluginfile_tags_bulk($componentmap, $record['content'], 'import');
+        
         if ($current) {
             $record['id'] = $current->id;
             $DB->update_record('tiny_c4l_flavor', $record);
@@ -368,11 +368,11 @@ class manager {
         global $DB;
         $record = (array) $record;
         $current = $DB->get_record('tiny_c4l_variant', ['name' => $record['name']]);
-        foreach ($componentmap as $oldid => $newid) {
-            $record['css'] = self::update_pluginfile_tags($oldid, $newid, $record['css']);
-            $record['content'] = self::update_pluginfile_tags($oldid, $newid, $record['content']);
-            $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl'] ?? '');
-        }
+        
+        $record['css'] = self::update_pluginfile_tags_bulk($componentmap, $record['css'] ?? '');
+        $record['content'] = self::update_pluginfile_tags_bulk($componentmap, $record['content'] ?? '');
+        $record['iconurl'] = self::update_pluginfile_tags_bulk($componentmap, $record['iconurl'] ?? '');
+
         if ($current) {
             $record['id'] = $current->id;
             $DB->update_record('tiny_c4l_variant', $record);
@@ -393,9 +393,9 @@ class manager {
         global $DB;
         $record = (array) $record;
         $current = $DB->get_record('tiny_c4l_comp_flavor', ['componentname' => $record['componentname'], 'flavorname' => $record['flavorname']]);
-        foreach ($componentmap as $oldid => $newid) {
-            $record['iconurl'] = self::update_pluginfile_tags($oldid, $newid, $record['iconurl'] ?? '');
-        }
+        
+        $record['iconurl'] = self::update_pluginfile_tags_bulk($componentmap, $record['iconurl'] ?? '');
+
         if ($current) {
             $record['id'] = $current->id;
             $DB->update_record('tiny_c4l_comp_flavor', $record);
@@ -426,14 +426,43 @@ class manager {
     /**
      * Update the pluginfile tags in the given subject.
      *
-     * @param integer $oldid
-     * @param integer $newid
+     * @param array $componentmap
      * @param string $subject
      * @return string
      */
-    public static function update_pluginfile_tags(int $oldid, int $newid, string $subject): string {
+    public static function update_pluginfile_tags_bulk(array $componentmap, string $subject): string {
+        foreach ($componentmap as $oldid => $newid) {
+            $subject = self::update_pluginfile_tags($oldid, $newid, $subject, 'bulk');
+        }
+        $subject = self::remove_mark($subject, 'bulk');
+        return $subject;
+    }
+
+    /**
+     * Update the pluginfile tags in the given subject.
+     *
+     * @param integer $oldid
+     * @param integer $newid
+     * @param string $subject
+     * @param string $mark (optional) A string to mark the path - to be removed later.
+     * @return string
+     */
+    public static function update_pluginfile_tags(int $oldid, int $newid, string $subject, string $mark = ''): string {
         $oldstring = '@@PLUGINFILE@@/1/tiny_c4l/images/' . $oldid . '/';
-        $newstring = '@@PLUGINFILE@@/1/tiny_c4l/images/' . $newid . '/';
+        $newstring = '@@PLUGINFILE@@/1/tiny_c4l/' . $mark . 'images/' . $newid . '/';
+        return str_replace($oldstring, $newstring, $subject);
+    }
+
+    /**
+     * Remove the mark from the given subject.
+     *
+     * @param string $subject
+     * @param string $mark
+     * @return string
+     */
+    public static function remove_mark(string $subject, string $mark): string {
+        $newstring = '@@PLUGINFILE@@/1/tiny_c4l/images/';;
+        $oldstring = '@@PLUGINFILE@@/1/tiny_c4l/' . $mark . 'images/';
         return str_replace($oldstring, $newstring, $subject);
     }
 
