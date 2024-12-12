@@ -161,7 +161,16 @@ class manager {
                 continue;
             }
             $newfilepath = ($categoryname ? str_replace('/' . $categoryname, '', $file->get_filepath()) : $file->get_filepath());
-            if ($oldfile = $fs->get_file($this->contextid, 'tiny_c4l', 'images', $categoryid, $newfilepath, $file->get_filename())) {
+            if (
+                $oldfile = $fs->get_file(
+                    $this->contextid,
+                    'tiny_c4l',
+                    'images',
+                    $categoryid,
+                    $newfilepath,
+                    $file->get_filename()
+                )
+            ) {
                 if ($oldfile->get_contenthash() != $file->get_contenthash()) {
                     $oldfile->replace_file_with($file);
                 }
@@ -289,12 +298,12 @@ class manager {
         if (isset($categorymap[$record['compcat']])) {
             $record['compcat'] = $categorymap[$record['compcat']];
         }
-        
+
         $record['css'] = self::update_pluginfile_tags_bulk($categorymap, $record['css'] ?? '');
         $record['code'] = self::update_pluginfile_tags_bulk($categorymap, $record['code'] ?? '');
         $record['js'] = self::update_pluginfile_tags_bulk($categorymap, $record['js'] ?? '');
         $record['iconurl'] = self::update_pluginfile_tags_bulk($categorymap, $record['iconurl'] ?? '');
-    
+
         $current = $DB->get_record('tiny_c4l_component', ['name' => $record['name']]);
         if ($current) {
             $record['id'] = $current->id;
@@ -347,10 +356,10 @@ class manager {
         global $DB;
         $record = (array) $record;
         $current = $DB->get_record('tiny_c4l_flavor', ['name' => $record['name']]);
-        
+
         $record['css'] = self::update_pluginfile_tags_bulk($categorymap, $record['css'], 'import');
         $record['content'] = self::update_pluginfile_tags_bulk($categorymap, $record['content'], 'import');
-        
+
         if ($current) {
             $record['id'] = $current->id;
             $DB->update_record('tiny_c4l_flavor', $record);
@@ -371,7 +380,7 @@ class manager {
         global $DB;
         $record = (array) $record;
         $current = $DB->get_record('tiny_c4l_variant', ['name' => $record['name']]);
-        
+
         $record['css'] = self::update_pluginfile_tags_bulk($categorymap, $record['css'] ?? '');
         $record['content'] = self::update_pluginfile_tags_bulk($categorymap, $record['content'] ?? '');
         $record['iconurl'] = self::update_pluginfile_tags_bulk($categorymap, $record['iconurl'] ?? '');
@@ -395,8 +404,11 @@ class manager {
     public static function import_component_flavor(array|object $record, array $categorymap): int {
         global $DB;
         $record = (array) $record;
-        $current = $DB->get_record('tiny_c4l_comp_flavor', ['componentname' => $record['componentname'], 'flavorname' => $record['flavorname']]);
-        
+        $current = $DB->get_record(
+            'tiny_c4l_comp_flavor',
+            ['componentname' => $record['componentname'], 'flavorname' => $record['flavorname']]
+        );
+
         $record['iconurl'] = self::update_pluginfile_tags_bulk($categorymap, $record['iconurl'] ?? '');
 
         if ($current) {
@@ -467,7 +479,8 @@ class manager {
      * @return string
      */
     public static function remove_mark(string $subject, string $mark): string {
-        $newstring = '@@PLUGINFILE@@/1/tiny_c4l/images/';;
+        $newstring = '@@PLUGINFILE@@/1/tiny_c4l/images/';
+        ;
         $oldstring = '@@PLUGINFILE@@/1/tiny_c4l/' . $mark . 'images/';
         return str_replace($oldstring, $newstring, $subject);
     }
@@ -520,7 +533,15 @@ class manager {
             $manager->importxml($xmlcontent);
             $categories = $DB->get_records('tiny_c4l_compcat');
             foreach ($categories as $category) {
-                $categoryfiles = $fs->get_directory_files($this->contextid, 'tiny_c4l', 'import', $draftitemid, '/' . $category->name . '/', true, false);
+                $categoryfiles = $fs->get_directory_files(
+                    $this->contextid,
+                    'tiny_c4l',
+                    'import',
+                    $draftitemid,
+                    '/' . $category->name . '/',
+                    true,
+                    false
+                );
                 $manager->importfiles($categoryfiles, $category->id, $category->name);
             }
             $fs->delete_area_files($this->contextid, 'tiny_c4l', 'import', $draftitemid);

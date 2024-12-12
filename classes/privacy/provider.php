@@ -16,8 +16,6 @@
 
 namespace tiny_c4l\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\writer;
 

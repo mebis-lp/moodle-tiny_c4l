@@ -24,7 +24,6 @@
  * @copyright  2024 ISB Bayern
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Execute the plugin upgrade steps from the given old version.
@@ -40,7 +39,6 @@ function xmldb_tiny_c4l_upgrade($oldversion): bool {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2024110500) {
-
         // Define table tiny_c4l_compcat to be created.
         $table = new xmldb_table('tiny_c4l_compcat');
 
@@ -157,7 +155,6 @@ function xmldb_tiny_c4l_upgrade($oldversion): bool {
     }
 
     if ($oldversion < 2024120401) {
-
         // Define table tiny_c4l_compcat and field to be added.
         $table = new xmldb_table('tiny_c4l_component');
         $field = new xmldb_field('hideforstudents', XMLDB_TYPE_INTEGER, '1', null, null, null, 0, null);
@@ -181,7 +178,6 @@ function xmldb_tiny_c4l_upgrade($oldversion): bool {
     }
 
     if ($oldversion < 2024120405) {
-
         // Insert junction table component_variant.
         tiny_c4l_insert_comp_variant();
 

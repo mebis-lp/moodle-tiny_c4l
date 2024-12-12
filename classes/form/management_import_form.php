@@ -24,6 +24,9 @@ namespace tiny_c4l\form;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class management_import_form extends base_form {
+    /**
+     * Form definition.
+     */
     public function definition() {
         $mform =& $this->_form;
 
@@ -86,7 +89,15 @@ class management_import_form extends base_form {
         $manager->importxml($xmlcontent);
         $categories = $DB->get_records('tiny_c4l_compcat');
         foreach ($categories as $category) {
-            $categoryfiles = $fs->get_directory_files(SYSCONTEXTID, 'tiny_c4l', 'import', $draftitemid, '/' . $category->name . '/', true, false);
+            $categoryfiles = $fs->get_directory_files(
+                SYSCONTEXTID,
+                'tiny_c4l',
+                'import',
+                $draftitemid,
+                '/' . $category->name . '/',
+                true,
+                false
+            );
             $manager->importfiles($categoryfiles, $category->id, $category->name);
         }
 

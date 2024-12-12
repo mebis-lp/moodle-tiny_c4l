@@ -47,7 +47,14 @@ foreach ($files as $file) {
     $processedfiles[] = [
         'id' => $file->get_id(),
         'name' => $file->get_filename(),
-        'url' => moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(),
+        'url' => moodle_url::make_pluginfile_url(
+            $file->get_contextid(),
+            $file->get_component(),
+            $file->get_filearea(),
+            $file->get_itemid(),
+            $file->get_filepath(),
+            $file->get_filename()
+        )->out(),
     ];
 }
 

@@ -59,9 +59,9 @@ $sqlflavor = "SELECT CONCAT('.', f.name, '.flavor') FROM {tiny_c4l_flavor} f
               LEFT JOIN {tiny_c4l_component} c ON cf.componentname = c.name
               WHERE cf.id IS NULL OR c.id IS NULL";
 $loneflavors = $DB->get_fieldset_sql($sqlflavor);
-$sqlvariant = "SELECT CONCAT('.', v.name, '.variant') 
-                FROM {tiny_c4l_variant} v 
-                LEFT JOIN {tiny_c4l_comp_variant} cpv 
+$sqlvariant = "SELECT CONCAT('.', v.name, '.variant')
+                FROM {tiny_c4l_variant} v
+                LEFT JOIN {tiny_c4l_comp_variant} cpv
                 ON v.name = cpv.variant
                 WHERE cpv.id IS NULL";
 $lonevariants = $DB->get_fieldset_sql($sqlvariant);
@@ -70,7 +70,7 @@ $sqlcomponent = "SELECT CONCAT('.', c.name, '.component') FROM {tiny_c4l_compone
               WHERE cc.id IS NULL";
 $lonecomponents = $DB->get_fieldset_sql($sqlcomponent);
 // Add a compcat to make these accessible.
-if ($loneflavors || $lonevariants || $lonecomponents ) {
+if ($loneflavors || $lonevariants || $lonecomponents) {
     $foundcompcat = [
         'id' => 'false',
         'name' => 'found-items',
@@ -86,7 +86,7 @@ if ($loneflavors || $lonevariants || $lonecomponents ) {
 foreach ($variant as $key => $value) {
     $vcompcats = [];
     // Select the matching compcats.
-    $sql = "SELECT compcat 
+    $sql = "SELECT compcat
             FROM {tiny_c4l_component} c
             JOIN {tiny_c4l_comp_variant} cpv
             ON c.id = cpv.component
@@ -119,7 +119,7 @@ foreach ($component as $key => $value) {
     } else {
         $component[$key]->flavorexamplesarr = $flavorexamplesarr;
     }
-    // Keep only the first two entries
+    // Keep only the first two entries.
     if (count($component[$key]->flavorexamplesarr) > 2) {
         $component[$key]->flavorexamplesarr = array_slice($component[$key]->flavorexamplesarr, 0, 2);
     }
@@ -150,7 +150,7 @@ array_push($variant, $addentry);
 // Add exportlink.
 $exportlink = \moodle_url::make_pluginfile_url(SYSCONTEXTID, 'tiny_c4l', 'export', null, '/', 'tiny_c4l_export.xml')->out();
 
-$params = new \stdClass;
+$params = new \stdClass();
 $params->compcatactive = $compcatactive;
 $PAGE->requires->js_call_amd('tiny_c4l/management', 'init', [$params]);
 echo($OUTPUT->render_from_template('tiny_c4l/management', [

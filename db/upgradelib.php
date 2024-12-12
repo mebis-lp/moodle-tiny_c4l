@@ -17,12 +17,10 @@
 /**
  * Tiny_c4l upgrade related helper functions.
  *
- * @package    tiny_c4l/db
+ * @package    tiny_c4l
  * @copyright  2024 ISB Bayern, Franziska Hübler
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die;
 
 /**
  * Insert junction table component_variant.
@@ -66,7 +64,7 @@ function tiny_c4l_insert_comp_variant(): void {
             $vartocomp->component = $component->id;
             $vartocomp->variant = $variant;
             $DB->insert_record('tiny_c4l_comp_variant', $vartocomp);
-        } 
+        }
     }
     $components->close();
 

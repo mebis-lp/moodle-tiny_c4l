@@ -39,7 +39,7 @@ $flavor  = required_param('flavor', PARAM_ALPHANUMEXT);
 
 $componentdata = $DB->get_record('tiny_c4l_component', ['name' => $component]);
 $categorydata = $DB->get_record('tiny_c4l_compcat', ['id' => $componentdata->compcat]);
-$flavordata = $DB->get_record('tiny_c4l_flavor', ['name' => $flavor], );
+$flavordata = $DB->get_record('tiny_c4l_flavor', ['name' => $flavor]);
 
 $variant = '';
 $varianthtml = '';

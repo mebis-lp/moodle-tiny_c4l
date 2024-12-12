@@ -55,12 +55,9 @@ class utils {
                     'name' => $record->name,
                     'displayname' => $record->displayname,
                     'compcat' => $record->compcat,
-                    'imageclass' => $record->imageclass, // not in db table? delete?
                     'code' => self::replace_pluginfile_urls($record->code, true),
                     'text' => $record->text,
                     'displayorder' => $record->displayorder,
-                    'flavors' => explode(',', $record->flavors), // not in db table? maybe 'flavors' => '';
-                    'variants' => explode(',', $record->variants),  // not in db table?  maybe 'variants' => '';
                     'js' => self::replace_pluginfile_urls($record->js, true),
             ];
         }
@@ -83,7 +80,7 @@ class utils {
 
     /**
      * Get all component variants.
-     * 
+     *
      * @param bool $isstudent
      * @return array all component variants
      */
@@ -119,7 +116,10 @@ class utils {
         $compflavors = $DB->get_records('tiny_c4l_comp_flavor', null, '', 'id, componentname, flavorname');
         $components = [];
         foreach ($compflavors as $compflavor) {
-            $components[$compflavor->componentname] = array_merge([$compflavor->flavorname], $components[$compflavor->componentname] ?? []);
+            $components[$compflavor->componentname] = array_merge(
+                [$compflavor->flavorname],
+                $components[$compflavor->componentname] ?? []
+            );
         }
         return $components;
     }
@@ -219,7 +219,11 @@ class utils {
             if (empty($componentflavor->iconurl)) {
                 continue;
             }
-            $iconcssentries[] .= self::button_icon_css($componentflavor->componentname, self::replace_pluginfile_urls($componentflavor->iconurl, true), $componentflavor->flavorname);
+            $iconcssentries[] .= self::button_icon_css(
+                $componentflavor->componentname,
+                self::replace_pluginfile_urls($componentflavor->iconurl, true),
+                $componentflavor->flavorname
+            );
         }
         foreach ($components as $component) {
             if ($component->hideforstudents) {

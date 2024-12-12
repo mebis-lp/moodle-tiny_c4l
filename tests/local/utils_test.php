@@ -89,7 +89,7 @@ final class utils_test extends \advanced_testcase {
         $this->mock_clock_with_frozen($starttime);
 
         // We need to initially build the cache.
-        // This is usually being triggered by the
+        // This is usually being triggered by the before_http_headers hook.
         $mpage = new \moodle_page();
         $rbase = new \renderer_base($mpage, "/");
         $beforehttpheadershook = new before_http_headers($rbase);
@@ -103,7 +103,10 @@ final class utils_test extends \advanced_testcase {
         $this->assertStringContainsString($flavorrecord1->css, $css);
         $this->assertStringContainsString($flavorrecord2->css, $css);
         $this->assertStringContainsString($flavorrecord3->css, $css);
-        $this->assertStringContainsString("body.tiny_c4l_h4s .c4l-buttons-preview button[data-flavor='$flavorrecord3->name']", $css);
+        $this->assertStringContainsString(
+            "body.tiny_c4l_h4s .c4l-buttons-preview button[data-flavor='$flavorrecord3->name']",
+            $css
+        );
 
         $dbreadsbefore = $DB->perf_get_queries();
         hook_callbacks::add_c4l_data_to_dom($beforehttpheadershook);

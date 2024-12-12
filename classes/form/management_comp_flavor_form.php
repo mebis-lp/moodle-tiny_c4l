@@ -90,7 +90,7 @@ class management_comp_flavor_form extends dynamic_form {
 
         $result = true;
 
-        foreach($formdata->id as $key => $id) {
+        foreach ($formdata->id as $key => $id) {
             $record = new \stdClass();
             $record->id = $id;
             $record->iconurl = utils::replace_pluginfile_urls($formdata->iconurl[$key] ?? '');
@@ -111,7 +111,7 @@ class management_comp_flavor_form extends dynamic_form {
         $compflavor = $DB->get_records('tiny_c4l_comp_flavor');
 
         $data = [];
-        foreach($compflavor as $item) {
+        foreach ($compflavor as $item) {
             $data['id'][] = $item->id;
             $data['name'][] = $item->componentname . '/' . $item->flavorname;
             $data['iconurl'][] = utils::replace_pluginfile_urls($item->iconurl ?? '', true);

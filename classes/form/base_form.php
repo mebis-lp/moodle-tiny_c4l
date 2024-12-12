@@ -28,8 +28,11 @@ use context;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class base_form extends dynamic_form {
+    /** @var string $formtype */
     protected string $formtype;
-
+    /**
+     * Form definition.
+     */
     abstract public function definition();
 
     /**
@@ -94,12 +97,10 @@ abstract class base_form extends dynamic_form {
 
         $formdata = $this->get_data();
 
-        /**if (is_array($formdata->variants)) {
-            $formdata->variants = implode(',', $formdata->variants);
-        } DELETE?*/
-
-        if (($this->formtype == 'flavor' || $this->formtype == 'component')
-            && !isset($formdata->hideforstudents)) {
+        if (
+            ($this->formtype == 'flavor' || $this->formtype == 'component')
+            && !isset($formdata->hideforstudents)
+        ) {
                 $formdata->hideforstudents = 0;
         }
 
@@ -136,7 +137,12 @@ abstract class base_form extends dynamic_form {
         if ($this->formtype === 'component') {
             // Update component flavors.
             if ($oldrecord) {
-                $records = $DB->get_records('tiny_c4l_comp_flavor', ['componentname' => $oldrecord->name], '', 'flavorname, iconurl');
+                $records = $DB->get_records(
+                    'tiny_c4l_comp_flavor',
+                    ['componentname' => $oldrecord->name],
+                    '',
+                    'flavorname, iconurl'
+                );
                 $DB->delete_records('tiny_c4l_comp_flavor', ['componentname' => $oldrecord->name]);
             }
             if (count($formdata->flavors) > 0) {
@@ -165,10 +171,12 @@ abstract class base_form extends dynamic_form {
         }
 
         // Purge CSS to show new one.
-        if (($newrecord && !(empty($formdata->css) && empty($formdata->iconurl)))
+        if (
+            ($newrecord && !(empty($formdata->css) && empty($formdata->iconurl)))
             || ($oldrecord->css != $formdata->css)
             || ($oldrecord->iconurl != $formdata->iconurl)
-            || (isset($oldrecord->hideforstudents) && $oldrecord->hideforstudents != $formdata->hideforstudents)) {
+            || (isset($oldrecord->hideforstudents) && $oldrecord->hideforstudents != $formdata->hideforstudents)
+        ) {
             \tiny_c4l\local\utils::purge_css_cache();
             \tiny_c4l\local\utils::rebuild_css_cache();
         }
@@ -214,9 +222,19 @@ abstract class base_form extends dynamic_form {
 
         if ($this->formtype === 'component') {
             if (isset($source->name)) {
-                $flavors = $DB->get_fieldset_select('tiny_c4l_comp_flavor', 'flavorname', 'componentname = ?', ['componentname' => $source->name]);
+                $flavors = $DB->get_fieldset_select(
+                    'tiny_c4l_comp_flavor',
+                    'flavorname',
+                    'componentname = ?',
+                    ['componentname' => $source->name]
+                );
                 $source->flavors = $flavors;;
-                $variants = $DB->get_fieldset_select('tiny_c4l_comp_variant', 'variant', 'component = ?', ['component' => $source->id]);
+                $variants = $DB->get_fieldset_select(
+                    'tiny_c4l_comp_variant',
+                    'variant',
+                    'component = ?',
+                    ['component' => $source->id]
+                );
                 $source->variants = $variants;
             }
         }

@@ -24,6 +24,9 @@ namespace tiny_c4l\form;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class management_variant_form extends base_form {
+    /**
+     * Form definition.
+     */
     public function definition() {
         $mform =& $this->_form;
 
