@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
 class manager {
     /** @var int $contextid */
     protected int $contextid = 1;
-    /** @var array All tables to export data from. **/
+    /** @var array All tables to export data from. */
     protected static $tables = [
         'compcat' => 'tiny_c4l_compcat',
         'component' => 'tiny_c4l_component',
@@ -48,10 +48,10 @@ class manager {
         'compflavor' => 'tiny_c4l_comp_flavor',
         'compvariant' => 'tiny_c4l_comp_variant',
     ];
-    /** @var array All tables that are optional. **/
+    /** @var array All tables that are optional. */
     protected static $optionaltables = ['tiny_c4l_comp_flavor', 'tiny_c4l_comp_variant'];
 
-    /** @var string Item. **/
+    /** @var string Item. */
     protected static $item = 'row';
 
     /**
@@ -480,7 +480,6 @@ class manager {
      */
     public static function remove_mark(string $subject, string $mark): string {
         $newstring = '@@PLUGINFILE@@/1/tiny_c4l/images/';
-        ;
         $oldstring = '@@PLUGINFILE@@/1/tiny_c4l/' . $mark . 'images/';
         return str_replace($oldstring, $newstring, $subject);
     }
@@ -514,13 +513,18 @@ class manager {
         $DB->delete_records('tiny_c4l_flavor', ['id' => $id]);
     }
 
-    /**
+    /*
      * Import data from a zip file.
      *
-     * @param stored_file|string $zip
-     * @param int $draftitemid
+     * This method processes the provided zip file, extracts its contents,
+     * and imports the relevant XML and related category files. It also handles
+     * the cleanup of temporary files and rebuilds the system caches (CSS and JS).
+     *
+     * @param stored_file|string $zip The zip file to import, either as a file object or path.
+     * @param int $draftitemid The draft item ID associated with the import process (default is 0).
+     * @return void
      */
-    public function import(stored_file|string $zip, $draftitemid = 0) {
+    public function import(stored_file|string $zip, $draftitemid = 0): void {
         global $DB;
 
         if (file_exists($zip)) {
