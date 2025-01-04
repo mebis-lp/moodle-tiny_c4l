@@ -351,7 +351,7 @@ class utils {
      */
     public static function variant_icon_css(string $variant, string $iconurl): string {
         return <<<CSS
-        .c4l-button-variant[data-variant="{$variant}"] {
+        .c4l-button-variant[data-variant="{$variant}"]::before {
             background-image: url('{$iconurl}');
         }
         CSS;
